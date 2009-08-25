@@ -45,5 +45,13 @@ abstract class Framework_Controller
     {
         $this->action = $action;
     }
+
+    public function init()
+    {
+    }
+
+    public function preDispatch()
+    {
+    }
 }
 

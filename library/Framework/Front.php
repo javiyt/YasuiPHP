@@ -9,6 +9,8 @@ final class Framework_Front
     {
         $this->router = Framework_Router::getRoute();
         $this->view = Framework_View::getInstance();
+        $this->addPreAction('init');
+        $this->addPreAction('preDispatch');
         $this->addPostAction('renderView');
     }
 
