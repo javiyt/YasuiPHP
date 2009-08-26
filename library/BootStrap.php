@@ -20,6 +20,14 @@ if (!defined('MODELS_ROOT')) {
     define('MODELS_ROOT',APPLICATION_ROOT.'models');
 }
 
+if (!defined('DEFAULT_CONTROLLER')) {
+    define('DEFAULT_CONTROLLER','index');
+}
+
+if (!defined('DEFAULT_ACTION')) {
+    define('DEFAULT_ACTION','index');
+}
+
 function __autoload ($class)
 {
     $clase = LIBRARY_ROOT.str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';

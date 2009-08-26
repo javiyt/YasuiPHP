@@ -57,6 +57,7 @@ class Template extends Savant3
         parent::__construct($config);
         $this->_metas['keywords'] = array();
         $this->baseURL = $config['baseURL'];
+        $this->addPath('resource', dirname(__FILE__).'/Helpers/');
     }
 
     /**
