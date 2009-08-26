@@ -5,7 +5,7 @@ final class Framework_Router
     static public function getRoute ()
     {
         $request = Framework_Registry::get('request');
-        $return = array('controller' => 'index','action' => 'index');
+        $return = array('controller' => DEFAULT_CONTROLLER,'action' => DEFAULT_ACTION);
 
         if ($request->route) {
             $router = explode('/',$request->route);
