@@ -1,28 +1,13 @@
 <?php
-/**
- * Interfaz para las clases que gestionan el acceso a la base de datos
- *
- * @package CMS
- * @version 0.1
- */
-abstract class Framework_Database {
-    
-    /**
-     * Variable que almacena el recurso de conexión a la base de datos
-     * @var resource
-     * @access protected
-     */
-    protected $conexion = null;
-
-
-    abstract public function exists($tabla='',$campo=array(),$valor=array(),$excluir=array());
-    abstract public function getOne($tabla='',$campos=array(),$valores=array());
-    abstract public function getAll($tabla='',$campos=array(),$valores=array(),$order=array());
-    abstract public function insert($tabla='',$valores=array());
-    abstract public function update($tabla='',$where=array(),$valores=array());
-    abstract public function delete($tabla='',$valores=array());
-    abstract public function num($tabla='',$campos=array());
-    abstract public function query($query='');
-    abstract protected function prepare($valor='');
+class Framework_Database
+{
+    public function __construct($dbAdapter='MySQL')
+    {
+        if (!Framework_Registry::exists('databaseConnection')) {
+            $adapter = 'Framework_Database_'.$dbAdapter;
+            Framework_Registry::set('databaseConnection',new $adapter());
+        }
+        return Framework_Registry::get('databaseConnection');
+    }
 }
-?>
+

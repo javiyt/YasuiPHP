@@ -1,14 +1,7 @@
 <?php
-/**
- * Driver de acceso a mysql
- *
- * @package CMS
- * @version 0.1
- */
 
-//require dirname(__FILE__).'/../Database.php';
-
-class Framework_Database_MySQL extends Framework_Database {
+class Framework_Database_MySQL extends Framework_Database_Abstract
+{
 
     /**
      * Constructor de la clase, se hace privado para forzar a usar la función estática conexión
@@ -21,13 +14,8 @@ class Framework_Database_MySQL extends Framework_Database {
             $datos = Framework_Registry::get('databaseAccess');
         }
 
-        if (!Framework_Registry::exists('databaseConnection')) {
-            $this->conexion = mysql_connect($datos['server'],$datos['user'],$datos['password']);
-            mysql_select_db($datos['database'],$this->conexion);
-            Framework_Registry::set('databaseConnection',$this->conexion);
-        } else {
-            $this->conexion = Framework_Registry::get('databaseConnection');
-        }
+        $this->conexion = mysql_connect($datos['server'],$datos['user'],$datos['password']);
+        mysql_select_db($datos['database'],$this->conexion);
     }
 
     /**
@@ -38,23 +26,6 @@ class Framework_Database_MySQL extends Framework_Database {
         if ($this->conexion) {
             mysql_close($this->conexion);
         }
-    }
-
-    /**
-     * Realiza la conexión a la base de datos mediante los datos proporcionados, en caso de estar ya conectado devuelve el objeto de conexión, patrón Singleton
-     * @param array $datos
-     * @return object
-     * @access public
-     */
-    public static function conectar($datos=array())
-    {
-        if (count($datos) == 0) {
-            $datos = Framework_Registry::get('databaseAccess');
-        }
-        if (self::$instancia == null) {
-            self::$instancia = new self($datos);
-        }
-        return self::$instancia;
     }
 
     /**
@@ -100,8 +71,6 @@ class Framework_Database_MySQL extends Framework_Database {
                 $noincluir = 'AND '.$noincluir;
             }
         }
-        //$this->firephp->info("SELECT $select FROM $tabla WHERE $campos $noincluir");
-        //echo "SELECT $select FROM $tabla WHERE $campos $noincluir";
         $rs = mysql_query("SELECT $select FROM $tabla WHERE $campos $noincluir");
         if ($rs) {
             return mysql_num_rows($rs);
@@ -144,7 +113,6 @@ class Framework_Database_MySQL extends Framework_Database {
                 $where = 'WHERE '.$where;
             }
         }
-        //echo "SELECT $select FROM $tabla $where";
         $rs = mysql_query("SELECT $select FROM $tabla $where");
         if ($rs) {
             return mysql_fetch_assoc($rs);
@@ -227,7 +195,6 @@ class Framework_Database_MySQL extends Framework_Database {
             }
             $insertar .= "$key = '$value'";
         }
-        //echo "INSERT INTO $tabla SET $insertar";
         mysql_query("INSERT INTO $tabla SET $insertar");
         if (mysql_error()) {
             return false;
@@ -277,7 +244,6 @@ class Framework_Database_MySQL extends Framework_Database {
             $campos .= "$key = '$value'";
         }
 
-        //echo "UPDATE $tabla SET $campos WHERE $donde";
         mysql_query("UPDATE $tabla SET $campos WHERE $donde");
 
         if (mysql_error()) {
@@ -393,4 +359,4 @@ class Framework_Database_MySQL extends Framework_Database {
     }
 
 }
-?>
+
