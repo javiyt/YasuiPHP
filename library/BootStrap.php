@@ -20,6 +20,10 @@ if (!defined('MODELS_ROOT')) {
     define('MODELS_ROOT',APPLICATION_ROOT.'models');
 }
 
+if (!defined('CONFIG_ROOT')) {
+    define('CONFIG_ROOT',APPLICATION_ROOT.'configs'.DIRECTORY_SEPARATOR);
+}
+
 if (!defined('DEFAULT_CONTROLLER')) {
     define('DEFAULT_CONTROLLER','index');
 }
@@ -51,5 +55,5 @@ Framework_Registry::set('request',new Framework_Request());
 if (is_array($database)) {
     Framework_Registry::set('databaseAccess',$database);
 }
+
 $front = new Framework_Front();
-$front->dispatch();

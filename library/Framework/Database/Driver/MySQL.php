@@ -1,6 +1,6 @@
 <?php
 
-class Framework_Database_MySQL extends Framework_Database_Abstract
+class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
 {
 
     /**
@@ -11,11 +11,12 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
     public function __construct($datos=array())
     {
         if (count($datos) == 0) {
-            $datos = Framework_Registry::get('databaseAccess');
+            $config = Framework_Registry::get('config');
+            $datos = $config->database;
         }
 
-        $this->conexion = mysql_connect($datos['server'],$datos['user'],$datos['password']);
-        mysql_select_db($datos['database'],$this->conexion);
+        $this->_conexion = mysql_connect($datos['server'],$datos['user'],$datos['password']);
+        mysql_select_db($datos['database'],$this->_conexion);
     }
 
     /**
@@ -23,8 +24,8 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
      */
     public function __destruct()
     {
-        if ($this->conexion) {
-            mysql_close($this->conexion);
+        if ($this->_conexion) {
+            mysql_close($this->_conexion);
         }
     }
 
@@ -41,7 +42,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
     {
         $campos = '';
         $select = '';
-        $valor = $this->prepare($valor);
+        $valor = $this->_prepare($valor);
         if (!is_array($campo) && !is_array($valor)) {
             $campos = "$campo = '$valor'";
             $select = $campo;
@@ -94,7 +95,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
             $select = $campos;
         }
 
-        $valores = $this->prepare($valores);
+        $valores = $this->_prepare($valores);
         $where = '';
         if (is_array($valores)) {
             foreach($valores as $key => $value) {
@@ -186,7 +187,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
             return false;
         }
 
-        $valores = $this->prepare($valores);
+        $valores = $this->_prepare($valores);
 
         $insertar = '';
         foreach($valores as $key => $value) {
@@ -227,8 +228,8 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
             return false;
         }
 
-        $where = $this->prepare($where);
-        $valores = $this->prepare($valores);
+        $where = $this->_prepare($where);
+        $valores = $this->_prepare($valores);
 
         foreach($where as $key => $value) {
             if ($donde != '') {
@@ -265,7 +266,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
             return false;
         }
 
-        $valores = $this->prepare($valores);
+        $valores = $this->_prepare($valores);
 
         $where = '';
         foreach($valores as $key => $value) {
@@ -298,7 +299,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
             return false;
         }
 
-        $valores = $this->prepare($valores);
+        $valores = $this->_prepare($valores);
         $select = implode(',',array_keys($campos));
 
         $where = '';
@@ -346,7 +347,7 @@ class Framework_Database_MySQL extends Framework_Database_Abstract
      * @param mixed $valor
      * @return mixed
      */
-    protected function prepare($valor='')
+    protected function _prepare($valor='')
     {
         if (is_array($valor)) {
             foreach($valor as $key => $value) {

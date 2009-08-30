@@ -1,10 +1,10 @@
 <?php
 final class Framework_Request
 {
-    private $post;
-    private $get;
-    private $cookie;
-    private $data;
+    private $_post;
+    private $_get;
+    private $_cookie;
+    private $_data;
 
     public function __construct ()
     {
@@ -14,32 +14,32 @@ final class Framework_Request
             $_COOKIE = $this->clean($_COOKIE);
         }
 
-        $this->post = $_POST;
-        $this->get = $_GET;
-        $this->cookie = $_COOKIE;
+        $this->_post = $_POST;
+        $this->_get = $_GET;
+        $this->_cookie = $_COOKIE;
     }
 
     public function __set ($name,$value)
     {
-        $this->data[$name] = $value;
+        $this->_data[$name] = $value;
     }
 
     public function __get ($name)
     {
-        if (isset($this->post[$name])) {
-            return $this->post[$name];
+        if (isset($this->_post[$name])) {
+            return $this->_post[$name];
         }
         
-        if (isset($this->get[$name])) {
-            return $this->get[$name];
+        if (isset($this->_get[$name])) {
+            return $this->_get[$name];
         }
 
-        if (isset($this->cookie[$name])) {
-            return $this->cookie[$name];
+        if (isset($this->_cookie[$name])) {
+            return $this->_cookie[$name];
         }
 
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        if (isset($this->_data[$name])) {
+            return $this->_data[$name];
         }
 
         return false;

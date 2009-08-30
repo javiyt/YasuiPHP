@@ -1,14 +1,14 @@
 <?php
 abstract class Framework_Controller
 {
-    private $renderFormat = 'html';
-    private $output;
-    protected $view;
-    protected $action;
+    private $_renderFormat = 'html';
+    private $_output;
+    protected $_view;
+    protected $_action;
 
     public function __construct ()
     {
-        $this->view = Framework_View::getInstance();
+        $this->_view = Framework_View::getInstance();
     }
 
     protected function redirect($url)
@@ -19,31 +19,31 @@ abstract class Framework_Controller
 
     protected function renderJSON($data)
     {
-        $this->renderFormat = 'json';
-        $this->output = json_encode($data);
+        $this->_renderFormat = 'json';
+        $this->_output = json_encode($data);
     }
 
     public function renderView()
     {
-        if ($this->renderFormat == 'html') {
+        if ($this->_renderFormat == 'html') {
             $name = str_replace('controller','',strtolower(get_class($this)));
-            $this->view->template()->addTemplatePath(APPLICATION_ROOT.'views'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR);
-            $this->view->content = $this->view->template()->fetch($this->action.'.phtml');
+            $this->_view->template()->addTemplatePath(APPLICATION_ROOT.'views'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR);
+            $this->_view->content = $this->_view->template()->fetch($this->_action.'.phtml');
         } else {
-            echo $this->output;
+            echo $this->_output;
         }
     }
 
     public function renderLayout()
     {
-        if ($this->renderFormat == 'html') {
-            $this->view->template()->display('indexLayout.phtml');
+        if ($this->_renderFormat == 'html') {
+            $this->_view->template()->display('indexLayout.phtml');
         }
     }
 
     public function setAction($action)
     {
-        $this->action = $action;
+        $this->_action = $action;
     }
 
     public function init()

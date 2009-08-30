@@ -8,7 +8,7 @@ abstract class Framework_Database_Abstract
      * @var resource
      * @access protected
      */
-    protected $conexion = null;
+    protected $_conexion = null;
 
 
     abstract public function exists($tabla='',$campo=array(),$valor=array(),$excluir=array());
@@ -19,5 +19,5 @@ abstract class Framework_Database_Abstract
     abstract public function delete($tabla='',$valores=array());
     abstract public function num($tabla='',$campos=array());
     abstract public function query($query='');
-    abstract protected function prepare($valor='');
+    abstract protected function _prepare($valor='');
 }

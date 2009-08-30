@@ -4,12 +4,12 @@ require dirname(__FILE__).'/View/Template.php';
 final class Framework_View
 {
     static private $intance = null;
-    private $template;
+    private $_template;
 
     private function __construct ()
     {
-        $this->template = new Template();
-        $this->template->addTemplatePath(LAYOUT_ROOT);
+        $this->_template = new Template();
+        $this->_template->addTemplatePath(LAYOUT_ROOT);
     }
 
     public function getInstance()
@@ -22,12 +22,12 @@ final class Framework_View
 
     public function template ()
     {
-        return $this->template;
+        return $this->_template;
     }
 
     public function __set ($name,$value)
     {
-        $this->template->assign($name,$value);
+        $this->_template->assign($name,$value);
     }
 }
 

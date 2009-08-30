@@ -1,3 +1,6 @@
 <?php
-$database = array('server' => 'localhost','user' => 'root','password' => 'javi','database' => 'startup_inmuebles');
 require 'library/BootStrap.php';
+
+Framework_Registry::set('config', new Framework_Config('config.ini','ini'));
+
+$front->dispatch();

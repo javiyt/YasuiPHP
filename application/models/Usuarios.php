@@ -1,9 +1,9 @@
 <?php
-final class ModelUsuarios extends Framework_Database_MySQL
+final class ModelUsuarios extends Framework_Database
 {
 
     public function getMunicipios()
     {
-        return $this->getAll('users', '*');
+        return $this->dbAdapter()->getAll('users', '*');
     }
 }

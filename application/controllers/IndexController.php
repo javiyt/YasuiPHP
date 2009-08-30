@@ -3,8 +3,10 @@ class IndexController extends Framework_Controller {
 
     public function indexAction()
     {
-        $usuarios = new ModelUsuarios();
-        $this->view->usuarios = $usuarios->getMunicipios();
+        $auth = Framework_Auth::getInstance();
+        $authAdapter = $auth->getAdapter('DB');
+        $authAdapter->setIdentity('meth');
+        
     }
 }
 

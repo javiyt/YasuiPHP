@@ -1,14 +1,15 @@
 <?php
 final class Framework_Front
 {
-    private $router;
-    private $preAction = array();
-    private $postAction = array();
+    private $_router;
+    private $_preAction = array();
+    private $_postAction = array();
+    private $_view;
 
     public function __construct ()
     {
-        $this->router = Framework_Router::getRoute();
-        $this->view = Framework_View::getInstance();
+        $this->_router = Framework_Router::getRoute();
+        $this->_view = Framework_View::getInstance();
         $this->addPreAction('init');
         $this->addPreAction('preDispatch');
         $this->addPostAction('renderView');
@@ -16,46 +17,46 @@ final class Framework_Front
 
     public function addPreAction ($action)
     {
-        $this->preAction[] = $action;
+        $this->_preAction[] = $action;
     }
 
     public function addPostAction ($action)
     {
-        $this->postAction[] = $action;
+        $this->_postAction[] = $action;
     }
 
     public function forward($controller='index',$action='index')
     {
-        $this->router['controller'] = $controller;
-        $this->router['action'] = $action;
+        $this->_router['controller'] = $controller;
+        $this->_router['action'] = $action;
         $this->dispatch();
     }
 
     public function dispatch ()
     {
-        $class = ucfirst(strtolower($this->router['controller'])).'Controller';
+        $class = ucfirst(strtolower($this->_router['controller'])).'Controller';
         $fileclass = APPLICATION_ROOT.CONTROLLER_ROOT.$class.'.php';
         if (file_exists($fileclass)) {
             require $fileclass;
             $controller = new $class;
             
-            foreach ($this->preAction as $action) {
+            foreach ($this->_preAction as $action) {
                 $this->execute($controller,$action);
             }
 
-            $action = ucfirst(strtolower($this->router['action'])).'Action';
-            $controller->setAction($this->router['action']);
+            $action = ucfirst(strtolower($this->_router['action'])).'Action';
+            $controller->setAction($this->_router['action']);
             $this->execute($controller,$action);
 
             $this->addPostAction('renderLayout');
             
-            foreach($this->postAction as $action) {
+            foreach($this->_postAction as $action) {
                 $this->execute($controller,$action);
             }
         } else {
             header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
             if (file_exists(LAYOUT_ROOT.'404.phtml')) {
-                $this->view->show('404.phtml');
+                $this->_view->show('404.phtml');
             } else {
                 echo 'Not Found';
             }
@@ -69,7 +70,7 @@ final class Framework_Front
         } else {
             header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
             if (file_exists(LAYOUT_ROOT.'404.phtml')) {
-                $this->view->show('404.phtml');
+                $this->_view->show('404.phtml');
             } else {
                 echo 'Not Found';
             }
