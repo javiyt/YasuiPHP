@@ -114,6 +114,7 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
                 $where = 'WHERE '.$where;
             }
         }
+
         $rs = mysql_query("SELECT $select FROM $tabla $where");
         if ($rs) {
             return mysql_fetch_assoc($rs);

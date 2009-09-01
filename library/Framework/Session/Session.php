@@ -10,6 +10,8 @@ class Framework_Session
         if ($adapter == 'database') {
             $this->_adapter = new Framework_Session_Adapter_DB();
             session_set_save_handler(array($this->_adapter,'open'),array($this->_adapter,'close'),array($this->_adapter,'read'),array($this->_adapter,'write'),array($this->_adapter,'destroy'),array($this->_adapter,'gc'));
+        } else {
+            $this->_adapter = $adapter;
         }
         session_start();
         $this->_namespace = $namespace;
@@ -45,6 +47,17 @@ class Framework_Session
         } else {
             return false;
         }
+    }
+
+    public function __isset($key)
+    {
+        return isset($_SESSION[$this->_namespace][$key]);
+    }
+
+    public function __unset($key)
+    {
+        unset($_SESSION[$this->_namespace][$key]);
+        return true;
     }
 }
 

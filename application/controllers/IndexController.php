@@ -5,8 +5,8 @@ class IndexController extends Framework_Controller {
     {
         $auth = Framework_Auth::getInstance();
         $authAdapter = $auth->getAdapter('DB');
-        $authAdapter->setIdentity('meth');
-        
+        $authAdapter->authenticate('mth@mthweb.org','javi');
+        $authAdapter->isAuthenticate();
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('APPLICATION_ROOT')) {
-    define('APPLICATION_ROOT',dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR);
+    define('APPLICATION_ROOT','.'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR);
 }
 
 if (!defined('CONTROLLER_ROOT')) {
@@ -9,7 +9,7 @@ if (!defined('CONTROLLER_ROOT')) {
 }
 
 if (!defined('LAYOUT_ROOT')) {
-    define('LAYOUT_ROOT',dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'layout');
+    define('LAYOUT_ROOT','.'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'layout');
 }
 
 if (!defined('LIBRARY_ROOT')) {
@@ -32,23 +32,11 @@ if (!defined('DEFAULT_ACTION')) {
     define('DEFAULT_ACTION','index');
 }
 
+require 'Framework/Autoload.php';
+
 function __autoload ($class)
 {
-    $clase = LIBRARY_ROOT.str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
-    if (substr($class,0,5) == 'Model') {
-        $clase = MODELS_ROOT.DIRECTORY_SEPARATOR.substr($class,5).'.php';
-        if (file_exists($clase) && is_readable($clase)) {
-            require $clase;
-        }
-    } else if (file_exists($clase) && is_readable($clase)) {
-        require $clase;
-
-    } else {
-        $clase = LIBRARY_ROOT.str_replace('_',DIRECTORY_SEPARATOR,$class).DIRECTORY_SEPARATOR.substr($class,strrpos($class,'_') + 1).'.php';
-        if (file_exists($clase) && is_readable($clase)) {
-            require $clase;
-        }
-    }
+    $autoload = new Framework_Autoload($class);
 }
 
 Framework_Registry::set('request',new Framework_Request());
