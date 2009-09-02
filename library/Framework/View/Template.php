@@ -6,7 +6,7 @@
  */
 
 //Incluye la clase padre, es decir Savant
-require dirname(__FILE__).'/Savant3.php';
+require 'Framework/View/Savant3.php';
 
 class Template extends Savant3
 {

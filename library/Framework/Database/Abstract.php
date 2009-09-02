@@ -9,7 +9,7 @@ abstract class Framework_Database_Abstract
      * @access protected
      */
     protected $_conexion = null;
-
+    protected $_reserved = array('LIKE','NOT','IS','<','>','<=','>=','=','!=');
 
     abstract public function exists($tabla='',$campo=array(),$valor=array(),$excluir=array());
     abstract public function getOne($tabla='',$campos=array(),$valores=array());
@@ -20,4 +20,9 @@ abstract class Framework_Database_Abstract
     abstract public function num($tabla='',$campos=array());
     abstract public function query($query='');
     abstract protected function _prepare($valor='');
+
+    protected function isReserved($string)
+    {
+        return in_array(substr($string,strpos($string,' ')),$this->_reserved);
+    }
 }

@@ -1,4 +1,6 @@
 <?php
+require 'Framework/Config/Abstract.php';
+
 class Framework_Config_Adapter_Php extends Framework_Config_Abstract
 {
     public function __construct($file)

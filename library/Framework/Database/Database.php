@@ -7,6 +7,8 @@ class Framework_Database
     {
         if ($this->_dbAdapter == null) {
             if (!Framework_Registry::exists('databaseConnection')) {
+                require 'Framework/Database/Driver/'.$dbAdapter.'.php';
+                
                 $adapter = 'Framework_Database_Driver_'.$dbAdapter;
                 Framework_Registry::set('databaseConnection',new $adapter());
             }

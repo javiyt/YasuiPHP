@@ -1,4 +1,6 @@
 <?php
+require 'Framework/Auth/Abstract.php';
+
 class Framework_Auth_Adapter_DB extends Framework_Auth_Abstract
 {
     private $_dbAdapter = null;

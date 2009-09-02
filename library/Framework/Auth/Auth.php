@@ -20,6 +20,8 @@ class Framework_Auth
         }
 
         if (!isset($this->_adapter[$adapter])) {
+            require 'Framework/Auth/Adapter/'.$adapter.'.php';
+            
             $class = 'Framework_Auth_Adapter_'.$adapter;
             $this->_adapter[$adapter] = new $class;
         }

@@ -33,6 +33,9 @@ if (!defined('DEFAULT_ACTION')) {
 }
 
 require 'Framework/Autoload.php';
+require 'Framework/Front.php';
+require 'Framework/Registry.php';
+require 'Framework/Request.php';
 
 function __autoload ($class)
 {

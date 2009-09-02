@@ -1,4 +1,7 @@
 <?php
+require 'Framework/Router.php';
+require 'Framework/View.php';
+
 final class Framework_Front
 {
     private $_router;

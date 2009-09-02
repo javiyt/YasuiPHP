@@ -11,7 +11,10 @@ class Framework_Config
         }
 
         if (file_exists(CONFIG_ROOT.$file)) {
+            require 'Framework/Config/Adapter/'.ucfirst($type).'.php';
+
             $adapter = 'Framework_Config_Adapter_'.ucfirst($type);
+
             $this->_adapter = new $adapter($file);
         }
     }

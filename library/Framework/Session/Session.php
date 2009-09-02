@@ -3,15 +3,19 @@ class Framework_Session
 {
     protected static $instance = null;
     private $_namespace;
-    private $_adapter;
+    private $_adapter = null;
 
     protected function __construct($namespace='',$adapter='session')
     {
-        if ($adapter == 'database') {
-            $this->_adapter = new Framework_Session_Adapter_DB();
-            session_set_save_handler(array($this->_adapter,'open'),array($this->_adapter,'close'),array($this->_adapter,'read'),array($this->_adapter,'write'),array($this->_adapter,'destroy'),array($this->_adapter,'gc'));
-        } else {
-            $this->_adapter = $adapter;
+        if ($this->_adapter == null) {
+            if ($adapter == 'database') {
+                require 'Framework/Session/Adapter/DB.php';
+
+                $this->_adapter = new Framework_Session_Adapter_DB();
+                session_set_save_handler(array($this->_adapter,'open'),array($this->_adapter,'close'),array($this->_adapter,'read'),array($this->_adapter,'write'),array($this->_adapter,'destroy'),array($this->_adapter,'gc'));
+            } else {
+                $this->_adapter = $adapter;
+            }
         }
         session_start();
         $this->_namespace = $namespace;

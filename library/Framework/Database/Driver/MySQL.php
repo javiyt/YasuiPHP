@@ -1,4 +1,5 @@
 <?php
+require 'Framework/Database/Abstract.php';
 
 class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
 {
@@ -49,7 +50,12 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
         } else if (is_array($campo) && is_array($valor)) {
             $limite = count($campo);
             for ($i=0;$i<$limite;$i++) {
-                $campos .= "{$campo[$i]} = '{$valor[$i]}'";
+                if ($this->isReserved($valor[$i])) {
+                    $campos .= "{$campo[$i]} {$valor[$i]}";
+                } else {
+                    $campos .= "{$campo[$i]} = '{$valor[$i]}'";
+                }
+
                 $select .= $campo[$i];
                 if ($i < ($limite - 1)) {
                     $campos .= ' AND ';
@@ -102,8 +108,7 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
                 if ($where != '') {
                     $where .= ' AND ';
                 }
-                if (preg_match('/^\W/',$value)) {
-                    $value = preg_replace('/\w*/',"'$1'",$value);
+                if ($this->isReserved($value)) {
                     $where .= " $key $value";
                 } else {
                     $where .= " $key = '$value'";
@@ -146,7 +151,11 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
                 if ($where != '') {
                     $where .= ' AND ';
                 }
-                $where .= "$key = '$value'";
+                if ($this->isReserved($value)) {
+                    $where .= " $key $value";
+                } else {
+                    $where .= "$key = '$value'";
+                }
             }
             if ($where != '') {
                 $where = 'WHERE '.$where;
@@ -263,18 +272,22 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
      */
     public function delete($tabla='',$valores=array())
     {
-        if (!is_array($valores)) {
-            return false;
-        }
-
+        $where = '';
         $valores = $this->_prepare($valores);
 
-        $where = '';
-        foreach($valores as $key => $value) {
-            if ($where != '') {
-                $where .= ' AND ';
+        if (is_array($valores)) {
+            foreach($valores as $key => $value) {
+                if ($where != '') {
+                    $where .= ' AND ';
+                }
+                if ($this->isReserved($value)) {
+                    $where .= "$key $value";
+                } else {
+                    $where .= "$key = '$value'";
+                }
             }
-            $where .= "$key = '$value'";
+        } else if (trim($valores) != '') {
+            $where = $valores;
         }
 
         if ($where != '') {
@@ -308,9 +321,9 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
             if ($where != '') {
                 $where .= ' AND ';
             }
-			if ($value != '') {
-				$where .= "$key = '$value'";
-			}
+            if ($value != '') {
+                $where .= "$key = '$value'";
+            }
         }
 
         if ($where != '') {
@@ -328,7 +341,7 @@ class Framework_Database_Driver_MySQL extends Framework_Database_Abstract
     public function query($query='')
     {
         $rs = mysql_query($query);
-        if (preg_match('/^SELECT(.*)/',$query)) {
+        if (preg_match('/^SELECT/',$query)) {
             if ($rs) {
                 $retorno = array();
                 while($row=mysql_fetch_assoc($rs)) {

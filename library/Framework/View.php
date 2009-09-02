@@ -1,5 +1,5 @@
 <?php
-require dirname(__FILE__).'/View/Template.php';
+require 'Framework/View/Template.php';
 
 final class Framework_View
 {
@@ -15,7 +15,7 @@ final class Framework_View
     public function getInstance()
     {
         if (self::$intance == null) {
-            self::$intance = new Framework_View();
+            self::$intance = new self();
         }
         return self::$intance;
     }
