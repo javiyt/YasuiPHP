@@ -10,8 +10,8 @@
 *
 */
 
-require dirname(__FILE__).'/Form_Filter.php';
-require dirname(__FILE__).'/Form_Validate.php';
+require_once 'Framework/Validate/Validate.php';
+require_once 'Framework/Filter/Filter.php';
 
 abstract class Framework_Form
 {
@@ -28,6 +28,8 @@ abstract class Framework_Form
     private $_stopNotValid = false;
     private $_error = null;
     private $_lang = array();
+    private $_filter = null;
+    private $_validate = null;
 
     public function __construct ($name=null,$lang=array())
     {
@@ -36,6 +38,11 @@ abstract class Framework_Form
         }
         $this->_lang = $lang;
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->parseForm(true,true);
     }
 
     public function setName ($name=null)
@@ -221,7 +228,7 @@ abstract class Framework_Form
     * PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS
     */
 
-    public function parseForm ($withErrors=false,$withValues=false)
+    private function parseForm ($withErrors=false,$withValues=false)
     {
         $xHtml = '<form';
 
@@ -524,39 +531,42 @@ abstract class Framework_Form
                 }
 
                 if ($filtered && is_array($this->_formElements[$name]['filters'])) {
-                    $formFilter = Form_Filter::getInstance(true);
+
+                    if ($this->_filter == null) {
+                        $this->_filter = new Framework_Filter();
+                    }
 
                     foreach ($this->_formElements[$name]['filters'] as $filter => $options) {
                         switch ($filter) {
                             case 'Alnum':
-                                $value = $formFilter->filterAlnum($value,$options['whiteSpace'],$options['allAlphabets']);
+                                $value = $this->_filter->filterAlnum($value,$options['whiteSpace'],$options['allAlphabets']);
                                 break;
                             case 'Alpha':
-                                $value = $formFilter->filterAlpha($value,$options['whiteSpace'],$options['allAlphabets']);
+                                $value = $this->_filter->filterAlpha($value,$options['whiteSpace'],$options['allAlphabets']);
                                 break;
                             case 'Digits':
-                                $value = $formFilter->filterDigits($value);
+                                $value = $this->_filter->filterDigits($value);
                                 break;
                             case 'HtmlEntities':
-                                $value = $formFilter->filterHtmlEntities($value,$options['charset']);
+                                $value = $this->_filter->filterHtmlEntities($value,$options['charset']);
                                 break;
                             case 'Int':
-                                $value = $formFilter->filterInt($value);
+                                $value = $this->_filter->filterInt($value);
                                 break;
                             case 'NewLines':
-                                $value = $formFilter->filterNewLines($value);
+                                $value = $this->_filter->filterNewLines($value);
                                 break;
                             case 'StringLower':
-                                $value = $formFilter->filterStringLower($value);
+                                $value = $this->_filter->filterStringLower($value);
                                 break;
                             case 'StringUpper':
-                                $value = $formFilter->filterStringUpper($value);
+                                $value = $this->_filter->filterStringUpper($value);
                                 break;
                             case 'Tags':
-                                $value = $formFilter->filterTags($value);
+                                $value = $this->_filter->filterTags($value);
                                 break;
                             case 'Trim':
-                                $value = $formFilter->filterTrim($value);
+                                $value = $this->_filter->filterTrim($value);
                                 break;
                         }
                     }
@@ -597,120 +607,122 @@ abstract class Framework_Form
                 if (is_array($this->_formElements[$name]['validate'])) {
                     $errors = '';
 
-                    $formValidate = Form_Validate::getInstance($this->_lang);
+                    if ($this->_validate == null) {
+                        $this->_validate = new Framework_Validate($this->_lang);
+                    }
 
                     foreach ($this->_formElements[$name]['validate'] as $validate => $options) {
                         switch ($validate) {
                             case 'Required':
-                                if (!$formValidate->validateRequired($value)) {
+                                if (!$this->_validate->validateRequired($value)) {
                                     if ($customNames) {
                                         $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                     }
-                                    $errors .= $formValidate->getError()."\n";
+                                    $errors .= $this->_validate->getError()."\n";
                                 }
                             break;
                             case 'Alnum':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateAlnum($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                    if (!$this->_validate->validateAlnum($value,$options['whiteSpace'],$options['allAlphabets'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'Alpha':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateAlpha($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                    if (!$this->_validate->validateAlpha($value,$options['whiteSpace'],$options['allAlphabets'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'Digits':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateDigits($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                    if (!$this->_validate->validateDigits($value,$options['whiteSpace'],$options['allAlphabets'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'Int':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateInt($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                    if (!$this->_validate->validateInt($value,$options['whiteSpace'],$options['allAlphabets'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'Between':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateBetween($value,$options['min'],$options['max'])) {
+                                    if (!$this->_validate->validateBetween($value,$options['min'],$options['max'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'MoreThan':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateMoreThan($value,$options['limit'])) {
+                                    if (!$this->_validate->validateMoreThan($value,$options['limit'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'LessThan':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateLessThan($value,$options['limit'])) {
+                                    if (!$this->_validate->validateLessThan($value,$options['limit'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'Email':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateEmail($value)) {
+                                    if (!$this->_validate->validateEmail($value)) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'InArray':
-                                if (!$formValidate->validateInarray($value, $options['array'])) {
+                                if (!$this->_validate->validateInarray($value, $options['array'])) {
                                     if ($customNames) {
                                         $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                     }
-                                    $errors .= $formValidate->getError()."\n";
+                                    $errors .= $this->_validate->getError()."\n";
                                 }
                                 break;
                             case 'URL':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateURL($value)) {
-                                        $errors .= $formValidate->getError()."\n";
+                                    if (!$this->_validate->validateURL($value)) {
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;
                             case 'RegExp':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$formValidate->validateRegExp($value,$options['regexp'])) {
+                                    if (!$this->_validate->validateRegExp($value,$options['regexp'])) {
                                         if ($customNames) {
                                             $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
                                         }
-                                        $errors .= $formValidate->getError()."\n";
+                                        $errors .= $this->_validate->getError()."\n";
                                     }
                                 }
                                 break;

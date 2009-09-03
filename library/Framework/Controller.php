@@ -27,7 +27,7 @@ abstract class Framework_Controller
     {
         if ($this->_renderFormat == 'html') {
             $name = str_replace('controller','',strtolower(get_class($this)));
-            $this->_view->template()->addTemplatePath(APPLICATION_ROOT.'views'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR);
+            $this->_view->template()->addTemplatePath(VIEWS_ROOT.$name.DIRECTORY_SEPARATOR);
             $this->_view->content = $this->_view->template()->fetch($this->_action.'.phtml');
         } else {
             echo $this->_output;

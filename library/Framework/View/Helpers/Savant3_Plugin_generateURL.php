@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/Savant3_plugin_baseURL.php';
+require_once 'Framework/View/Helpers/Savant3_Plugin_baseURL.php';
 
 class Savant3_Plugin_generateURL extends Savant3_Plugin
 {

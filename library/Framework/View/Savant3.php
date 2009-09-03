@@ -18,8 +18,8 @@
 /**
 * Always have these classes available.
 */
-include_once dirname(__FILE__) . '/Savant3/Filter.php';
-include_once dirname(__FILE__) . '/Savant3/Plugin.php';
+require dirname(__FILE__) . '/Savant3/Filter.php';
+require dirname(__FILE__) . '/Savant3/Plugin.php';
 
 
 /**

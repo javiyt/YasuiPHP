@@ -9,7 +9,7 @@ if (!defined('CONTROLLER_ROOT')) {
 }
 
 if (!defined('LAYOUT_ROOT')) {
-    define('LAYOUT_ROOT','.'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'layout');
+    define('LAYOUT_ROOT','.'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'layout'.DIRECTORY_SEPARATOR);
 }
 
 if (!defined('LIBRARY_ROOT')) {
@@ -17,11 +17,19 @@ if (!defined('LIBRARY_ROOT')) {
 }
 
 if (!defined('MODELS_ROOT')) {
-    define('MODELS_ROOT',APPLICATION_ROOT.'models');
+    define('MODELS_ROOT',APPLICATION_ROOT.'models'.DIRECTORY_SEPARATOR);
 }
 
 if (!defined('CONFIG_ROOT')) {
     define('CONFIG_ROOT',APPLICATION_ROOT.'configs'.DIRECTORY_SEPARATOR);
+}
+
+if (!defined('VIEWS_ROOT')) {
+    define('VIEWS_ROOT',APPLICATION_ROOT.'views'.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR);
+}
+
+if (!defined('FORMS_ROOT')) {
+    define('FORMS_ROOT',APPLICATION_ROOT.'forms'.DIRECTORY_SEPARATOR);
 }
 
 if (!defined('DEFAULT_CONTROLLER')) {
