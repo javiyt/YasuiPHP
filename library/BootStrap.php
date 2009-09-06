@@ -40,19 +40,19 @@ if (!defined('DEFAULT_ACTION')) {
     define('DEFAULT_ACTION','index');
 }
 
-require 'Framework/Autoload.php';
-require 'Framework/Front.php';
-require 'Framework/Registry.php';
-require 'Framework/Request.php';
+require 'Yasui/Autoload.php';
+require 'Yausi/Front.php';
+require 'Yasui/Registry.php';
+require 'Yasui/Request.php';
 
 function __autoload ($class)
 {
-    $autoload = new Framework_Autoload($class);
+    $autoload = new Yasui_Autoload($class);
 }
 
-Framework_Registry::set('request',new Framework_Request());
+Yasui_Registry::set('request',new Yasui_Request());
 if (is_array($database)) {
-    Framework_Registry::set('databaseAccess',$database);
+    Yasui_Registry::set('databaseAccess',$database);
 }
 
-$front = new Framework_Front();
+$front = new Yasui_Front();
