@@ -27,8 +27,8 @@ abstract class Yasui_Controller
     {
         if ($this->_renderFormat == 'html') {
             $name = str_replace('controller','',strtolower(get_class($this)));
-            $this->_view->template()->addTemplatePath(VIEWS_ROOT.$name.DIRECTORY_SEPARATOR);
-            $this->_view->content = $this->_view->template()->fetch($this->_action.'.phtml');
+            $this->_view->addTemplatePath(VIEWS_ROOT.$name.DIRECTORY_SEPARATOR);
+            $this->_view->content = $this->_view->fetch($this->_action.'.phtml');
         } else {
             echo $this->_output;
         }
@@ -37,7 +37,7 @@ abstract class Yasui_Controller
     public function renderLayout()
     {
         if ($this->_renderFormat == 'html') {
-            $this->_view->template()->display('indexLayout.phtml');
+            echo $this->_view;
         }
     }
 

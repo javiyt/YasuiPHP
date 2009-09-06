@@ -1,6 +1,5 @@
 <?php
 require 'Yasui/Router.php';
-require 'Yasui/View.php';
 
 final class Yasui_Front
 {
@@ -59,7 +58,7 @@ final class Yasui_Front
         } else {
             header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
             if (file_exists(LAYOUT_ROOT.'404.phtml')) {
-                $this->_view->show('404.phtml');
+                $this->_view->display('404.phtml');
             } else {
                 echo 'Not Found';
             }
@@ -73,7 +72,7 @@ final class Yasui_Front
         } else {
             header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
             if (file_exists(LAYOUT_ROOT.'404.phtml')) {
-                $this->_view->show('404.phtml');
+                $this->_view->display('404.phtml');
             } else {
                 echo 'Not Found';
             }

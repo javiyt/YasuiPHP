@@ -44,6 +44,7 @@ require 'Yasui/Autoload.php';
 require 'Yasui/Front.php';
 require 'Yasui/Registry.php';
 require 'Yasui/Request.php';
+require 'Yasui/View/View.php';
 
 function __autoload ($class)
 {
