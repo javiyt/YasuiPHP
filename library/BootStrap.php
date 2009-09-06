@@ -41,7 +41,7 @@ if (!defined('DEFAULT_ACTION')) {
 }
 
 require 'Yasui/Autoload.php';
-require 'Yausi/Front.php';
+require 'Yasui/Front.php';
 require 'Yasui/Registry.php';
 require 'Yasui/Request.php';
 
