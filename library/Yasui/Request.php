@@ -45,6 +45,11 @@ final class Yasui_Request
         return false;
     }
 
+    public function baseURL()
+    {
+        return substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], "/")+1);
+    }
+
     private function clean ($data)
     {
         if (is_array($data)) {
