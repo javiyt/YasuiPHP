@@ -1,7 +1,6 @@
 <?php
-require_once 'Framework/View/Helpers/Savant3_Plugin_baseURL.php';
 
-class Savant3_Plugin_generateURL extends Savant3_Plugin
+class generateURL_View_Helper extends Yasui_View_Helper
 {
     public function generateURL(array $url,$link,$attr=array())
     {
@@ -27,8 +26,8 @@ class Savant3_Plugin_generateURL extends Savant3_Plugin
             $stringURL .= $key.'/'.$value.'/';
         }
 
-        $base = new Savant3_Plugin_baseURL();
-        $html = '<a href="' . $base->baseURL() . $stringURL . '"';
+        $request = Yasui_Registry::get('request');
+        $html = '<a href="' . $request->baseURL() . $stringURL . '"';
 
         foreach($attr as $key => $value) {
             $html .= ' ' . $key .'="' . $value . '"';
