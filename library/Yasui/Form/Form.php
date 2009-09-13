@@ -23,7 +23,7 @@ abstract class Yasui_Form
     private $_formAction = null;
     private $_formAttribs = array();
     private $_formElements = array();
-    private $_formTypes = array('text','textarea','button','submit','image','select','radio','checkbox','password','hidden');
+    private $_formTypes = array('text','textarea','button','submit','image','select','radio','checkbox','password','hidden','file');
     private $_formDecorators = array('HtmlTag' => array('tag' => 'dd'),'Label' => array('tag' => 'dt'));
     private $_stopNotValid = false;
     private $_error = null;
@@ -48,6 +48,10 @@ abstract class Yasui_Form
 
     public function __get($name)
     {
+        if ($this->_formElements[$name]['type'] == 'file') {
+            return $_FILES[$name];
+        }
+
         return $this->getValue($name, true);
     }
 
@@ -118,6 +122,7 @@ abstract class Yasui_Form
                 $this->_formElements[$name]['attribs']['selected'] = $value;
             }
         }
+        return $this;
     }
 
     public function setValues($values=array())
@@ -125,6 +130,7 @@ abstract class Yasui_Form
         foreach ($values as $key => $value) {
             $this->setValue($key, $value);
         }
+        return $this;
     }
 
     public function setLabel($name=null,$label=null)
@@ -132,6 +138,7 @@ abstract class Yasui_Form
         if ($name != null && $label != null) {
             $this->_formElements[$name]['label'] = $label;
         }
+        return $this;
     }
 
     /*
@@ -281,27 +288,17 @@ abstract class Yasui_Form
                 $xHtml .= $this->parseLabel($name);
             }
 
+            $parseFunc = 'parse' . ucfirst($values['type']);
+
             switch ($values['type']) {
-                case 'text':
-                    if ($withValues) {
-                        $this->_formElements[$name]['attribs']['value'] = $this->getValue($name,false);
-                    }
-                    $xHtml .= $this->parseText($name);
-                    break;
                 case 'textarea':
+                case 'text':
+                case 'select':
+                case 'hidden':
                     if ($withValues) {
                         $this->_formElements[$name]['attribs']['value'] = $this->getValue($name,false);
                     }
-                    $xHtml .= $this->parseTextarea($name);
-                    break;
-                case 'password':
-                    $xHtml .= $this->parsePassword($name);
-                    break;
-                case 'select':
-                    if ($withValues) {
-                        $this->_formElements[$name]['attribs']['selected'] = $this->getValue($name,false);
-                    }
-                    $xHtml .= $this->parseSelect($name);
+                    $xHtml .= $this->$parseFunc($name);
                     break;
                 case 'radio':
                 case 'checkbox':
@@ -315,11 +312,9 @@ abstract class Yasui_Form
                 case 'image':
                     $xHtml .= $this->parseButton($name);
                     break;
-                case 'hidden':
-                    if ($withValues) {
-                        $this->_formElements[$name]['attribs']['value'] = $this->getValue($name,false);
-                    }
-                    $xHtml .= $this->parseHidden($name);
+                case 'password':
+                case 'file':
+                    $xHtml .= $this->$parseFunc($name);
                     break;
             }
 
@@ -386,6 +381,19 @@ abstract class Yasui_Form
         $xHtml = '';
         if ($name != null) {
             $xHtml = "<input type=\"text\" name=\"$name\" id=\"$name\"";
+            foreach ($this->_formElements[$name]['attribs'] as $attrib => $attribValue) {
+                $xHtml .= " $attrib=\"$attribValue\"";
+            }
+            $xHtml .= " />";
+        }
+        return $this->parseElementDecorator($xHtml);
+    }
+
+    private function parseFile ($name=null)
+    {
+        $xHtml = '';
+        if ($name != null) {
+            $xHtml = "<input type=\"file\" name=\"$name\" id=\"$name\"";
             foreach ($this->_formElements[$name]['attribs'] as $attrib => $attribValue) {
                 $xHtml .= " $attrib=\"$attribValue\"";
             }
@@ -550,29 +558,18 @@ abstract class Yasui_Form
                             case 'Alpha':
                                 $value = $this->_filter->filterAlpha($value,$options['whiteSpace'],$options['allAlphabets']);
                                 break;
-                            case 'Digits':
-                                $value = $this->_filter->filterDigits($value);
-                                break;
                             case 'HtmlEntities':
                                 $value = $this->_filter->filterHtmlEntities($value,$options['charset']);
                                 break;
+                            case 'Digits':
                             case 'Int':
-                                $value = $this->_filter->filterInt($value);
-                                break;
                             case 'NewLines':
-                                $value = $this->_filter->filterNewLines($value);
-                                break;
                             case 'StringLower':
-                                $value = $this->_filter->filterStringLower($value);
-                                break;
                             case 'StringUpper':
-                                $value = $this->_filter->filterStringUpper($value);
-                                break;
                             case 'Tags':
-                                $value = $this->_filter->filterTags($value);
-                                break;
                             case 'Trim':
-                                $value = $this->_filter->filterTrim($value);
+                                $filterFunc = 'filter' . $filter;
+                                $value = $this->_filter->$filterFunc($value);
                                 break;
                         }
                     }
@@ -627,6 +624,14 @@ abstract class Yasui_Form
                                     $errors .= $this->_validate->getError()."\n";
                                 }
                             break;
+                            case 'InArray':
+                                if (!$this->_validate->validateInarray($value, $options['array'])) {
+                                    if ($customNames) {
+                                        $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                    }
+                                    $errors .= $this->_validate->getError()."\n";
+                                }
+                                break;
                             case 'Alnum':
                                 if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
                                     if (!$this->_validate->validateAlnum($value,$options['whiteSpace'],$options['allAlphabets'])) {
@@ -705,14 +710,6 @@ abstract class Yasui_Form
                                         }
                                         $errors .= $this->_validate->getError()."\n";
                                     }
-                                }
-                                break;
-                            case 'InArray':
-                                if (!$this->_validate->validateInarray($value, $options['array'])) {
-                                    if ($customNames) {
-                                        $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
-                                    }
-                                    $errors .= $this->_validate->getError()."\n";
                                 }
                                 break;
                             case 'URL':
