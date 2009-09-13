@@ -10,6 +10,7 @@ abstract class Yasui_Database_Abstract
      */
     protected $_conexion = null;
     protected $_reserved = array('LIKE','NOT','IS','<','>','<=','>=','=','!=');
+    protected $_connectData = array();
 
     abstract public function exists($tabla='',$campo=array(),$valor=array(),$excluir=array());
     abstract public function getOne($tabla='',$campos=array(),$valores=array());
@@ -20,6 +21,8 @@ abstract class Yasui_Database_Abstract
     abstract public function num($tabla='',$campos=array());
     abstract public function query($query='');
     abstract protected function _prepare($valor='');
+    abstract protected function _connect();
+    abstract protected function _query($query='');
 
     protected function isReserved($string)
     {

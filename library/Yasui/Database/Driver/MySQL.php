@@ -13,11 +13,10 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
     {
         if (count($datos) == 0) {
             $config = Yasui_Registry::get('config');
-            $datos = $config->database;
+            $this->_connectData = $config->database;
+        } else {
+            $this->_connectData = $datos;
         }
-
-        $this->_conexion = mysql_connect($datos['server'],$datos['user'],$datos['password']);
-        mysql_select_db($datos['database'],$this->_conexion);
     }
 
     /**
@@ -28,6 +27,23 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
         if ($this->_conexion) {
             mysql_close($this->_conexion);
         }
+    }
+
+    protected function _connect()
+    {
+        if ($this->_conexion == null) {
+            $this->_conexion = mysql_connect($this->_connectData['server'],$this->_connectData['user'],$this->_connectData['password']);
+            mysql_select_db($this->_connectData['database'],$this->_conexion);
+        }
+    }
+
+    protected function _query($query='')
+    {
+        if ($this->_conexion == null) {
+            $this->_connect();
+        }
+
+        return mysql_query($query);
     }
 
     /**
@@ -78,7 +94,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
                 $noincluir = 'AND '.$noincluir;
             }
         }
-        $rs = mysql_query("SELECT $select FROM $tabla WHERE $campos $noincluir");
+        $rs = $this->_query("SELECT $select FROM $tabla WHERE $campos $noincluir");
         if ($rs) {
             return mysql_num_rows($rs);
         } else {
@@ -120,7 +136,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             }
         }
 
-        $rs = mysql_query("SELECT $select FROM $tabla $where");
+        $rs = $this->_query("SELECT $select FROM $tabla $where");
         if ($rs) {
             return mysql_fetch_assoc($rs);
         } else {
@@ -172,7 +188,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             $orderby = 'ORDER BY '.$orderby;
         }
         
-        $rs = mysql_query("SELECT $select FROM $tabla $where $orderby");
+        $rs = $this->_query("SELECT $select FROM $tabla $where $orderby");
         if ($rs) {
             $retorno = array();
             while($row = mysql_fetch_assoc($rs)) {
@@ -206,7 +222,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             }
             $insertar .= "$key = '$value'";
         }
-        mysql_query("INSERT INTO $tabla SET $insertar");
+        $this->_query("INSERT INTO $tabla SET $insertar");
         if (mysql_error()) {
             return false;
         } else {
@@ -255,7 +271,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             $campos .= "$key = '$value'";
         }
 
-        mysql_query("UPDATE $tabla SET $campos WHERE $donde");
+        $this->_query("UPDATE $tabla SET $campos WHERE $donde");
 
         if (mysql_error()) {
             return false;
@@ -294,7 +310,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             $where = 'WHERE '.$where;
         }
 
-        mysql_query("DELETE FROM $tabla $where");
+        $this->_query("DELETE FROM $tabla $where");
         if (mysql_error()) {
             return false;
         } else {
@@ -330,7 +346,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             $where = 'WHERE '.$where;
         }
 
-        $rs = mysql_query("SELECT $select FROM $tabla $where");
+        $rs = $this->_query("SELECT $select FROM $tabla $where");
         if (mysql_error()) {
             return false;
         } else {
@@ -340,7 +356,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
 
     public function query($query='')
     {
-        $rs = mysql_query($query);
+        $rs = $this->_query($query);
         if (preg_match('/^SELECT/',$query)) {
             if ($rs) {
                 $retorno = array();
@@ -363,6 +379,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      */
     protected function _prepare($valor='')
     {
+        $this->_connect();
         if (is_array($valor)) {
             foreach($valor as $key => $value) {
                 $valor[$key] = mysql_real_escape_string($value);

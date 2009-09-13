@@ -42,7 +42,13 @@ abstract class Yasui_Form
 
     public function __toString()
     {
-        return $this->parseForm(true,true);
+        $sent = $this->formSent();
+        return $this->parseForm($sent,$sent);
+    }
+
+    public function __get($name)
+    {
+        return $this->getValue($name, true);
     }
 
     public function setName ($name=null)
@@ -454,25 +460,25 @@ abstract class Yasui_Form
             $xHtml .= '>';
 
             foreach ($this->_formElements[$name]['attribs']['value'] as $key => $val) {
-            if (is_array($val)) {
-                $xHtml .= "<optgroup label=\"$key\">";
-                foreach ($val as $key2 => $val2) {
-                $xHtml .= "<option value=\"$key2\"";
-                if ($this->_formElements[$name]['attribs']['selected'] == $key2) {
-                $xHtml .= ' selected="selected"';
+                if (is_array($val)) {
+                    $xHtml .= "<optgroup label=\"$key\">";
+                    foreach ($val as $key2 => $val2) {
+                        $xHtml .= "<option value=\"$key2\"";
+                        if ($this->_formElements[$name]['attribs']['selected'] == $key2) {
+                            $xHtml .= ' selected="selected"';
+                        }
+                        $xHtml .= ">$val2</option>";
+                        $optionsArray[] = $key2;
+                    }
+                    $xHtml .= '</optgroup>';
+                } else {
+                    $xHtml .= "<option value=\"$key\"";
+                    if ($this->_formElements[$name]['attribs']['selected'] == $key) {
+                        $xHtml .= ' selected="selected"';
+                    }
+                    $xHtml .= ">$val</option>";
+                    $optionsArray[] = $key;
                 }
-                $xHtml .= ">$val2</option>";
-                $optionsArray[] = $key2;
-                }
-                $xHtml .= '</optgroup>';
-            } else {
-            $xHtml .= "<option value=\"$key\"";
-            if ($this->_formElements[$name]['attribs']['selected'] == $key) {
-            $xHtml .= ' selected="selected"';
-            }
-            $xHtml .= ">$val</option>";
-            $optionsArray[] = $key;
-            }
             }
             $xHtml .= '</select>';
             $this->addValidate($name,'InArray',array('array' => $optionsArray));

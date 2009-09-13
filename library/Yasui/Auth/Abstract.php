@@ -44,6 +44,11 @@ abstract class Yasui_Auth_Abstract
         return isset($this->_session->identity);
     }
 
+    public function deAuthenticate()
+    {
+        unset($this->_session->identity);
+        return true;
+    }
 
     protected function _getCrypCredential($credential)
     {

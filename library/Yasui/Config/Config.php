@@ -11,7 +11,7 @@ class Yasui_Config
         }
 
         if (file_exists(CONFIG_ROOT.$file)) {
-            require 'Yasui/Config/Adapter/'.ucfirst($type).'.php';
+            require_once 'Yasui/Config/Adapter/'.ucfirst($type).'.php';
 
             $adapter = 'Yasui_Config_Adapter_'.ucfirst($type);
 
@@ -22,6 +22,11 @@ class Yasui_Config
     public function __get($key)
     {
         return $this->_adapter->$key;
+    }
+
+    public function toArray()
+    {
+        return $this->_adapter->toArray();
     }
 }
 

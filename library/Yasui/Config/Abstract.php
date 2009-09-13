@@ -7,5 +7,10 @@ abstract class Yasui_Config_Abstract
     {
         return $this->_config[$key];
     }
+
+    public function toArray()
+    {
+        return $this->_config;
+    }
 }
 

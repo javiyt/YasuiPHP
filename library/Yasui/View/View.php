@@ -81,7 +81,7 @@ class Yasui_View
         $location = $this->findFile($file,'helper');
 
         if ($location) {
-            require $location;
+            require_once $location;
 
             $class = 'Yasui_View_Helper_' . $name;
             $plugin = new $class($this->_pluginConf[$name]);
