@@ -1,19 +1,54 @@
 <?php
-require 'Yasui/Router.php';
+/**
+ * Yasui Framework
+ *
+ * @category   Yasui
+ * @package    Yasui_Front
+ * @license    GNU Lesser General Public License (LGPL) version 2.1
+ */
 
 final class Yasui_Front
 {
+    /**
+     * Store the Yasui_Router object
+     * @var object
+     * @access private
+     */
     private $_router;
+    /**
+     * Actions to execute before the main action is executed
+     * @var array
+     * @access private
+     */
     private $_preAction = array();
+    /**
+     * Actions to execute after the main action is executed
+     * @var array
+     * @access private
+     */
     private $_postAction = array();
+    /**
+     * Store the Yasui_View object
+     * @var object
+     * @access private
+     */
     private $_view;
 
+    /**
+     * Constructor of the class
+     * @access public
+     */
     public function __construct ()
     {
-        $this->_router = Yasui_Router::getRoute();
+        //Get the Yasui_Router from the registry
+        $this->_router = Yasui_Registry::get('router');
+        //Instantiate the Yasui_View object
         $this->_view = Yasui_View::getInstance();
+        //Adds init action to execute before the main action
         $this->addPreAction('init');
+        //Adds preDispatch action to execute before the main action
         $this->addPreAction('preDispatch');
+        //Adds the renderView action to execute after the main action
         $this->addPostAction('renderView');
     }
 
@@ -29,14 +64,14 @@ final class Yasui_Front
 
     public function forward($controller='index',$action='index')
     {
-        $this->_router['controller'] = $controller;
-        $this->_router['action'] = $action;
+        $this->_router->controller = $controller;
+        $this->_router->action = $action;
         $this->dispatch();
     }
 
     public function dispatch ()
     {
-        $class = ucfirst(strtolower($this->_router['controller'])).'Controller';
+        $class = ucfirst(strtolower($this->_router->controller)).'Controller';
         $fileclass = APPLICATION_ROOT.CONTROLLER_ROOT.$class.'.php';
         if (file_exists($fileclass)) {
             require $fileclass;
@@ -46,8 +81,8 @@ final class Yasui_Front
                 $this->execute($controller,$action);
             }
 
-            $action = ucfirst(strtolower($this->_router['action'])).'Action';
-            $controller->setAction($this->_router['action']);
+            $action = ucfirst(strtolower($this->_router->action)).'Action';
+            $controller->setAction($this->_router->action);
             $this->execute($controller,$action);
 
             $this->addPostAction('renderLayout');
