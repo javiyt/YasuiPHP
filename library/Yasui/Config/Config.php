@@ -1,7 +1,7 @@
 <?php
 class Yasui_Config
 {
-    private $_adapter;
+    private $_adapter = null;
     private $_types = array('php','ini');
 
     public function __construct($file,$type='php')
@@ -21,12 +21,20 @@ class Yasui_Config
 
     public function __get($key)
     {
-        return $this->_adapter->$key;
+        if ($this->_adapter != null) {
+            return $this->_adapter->$key;
+        } else {
+            return false;
+        }
     }
 
     public function toArray()
     {
-        return $this->_adapter->toArray();
+        if ($this->_adapter != null) {
+            return $this->_adapter->toArray();
+        } else {
+            return array();
+        }
     }
 }
 

@@ -9,9 +9,9 @@ final class Yasui_Request
     public function __construct ()
     {
         if (ini_get('magic_quotes_gpc')) {
-            $_GET = $this->clean($_GET);
-            $_POST = $this->clean($_POST);
-            $_COOKIE = $this->clean($_COOKIE);
+            $_GET = $this->_clean($_GET);
+            $_POST = $this->_clean($_POST);
+            $_COOKIE = $this->_clean($_COOKIE);
         }
 
         $this->_post = $_POST;
@@ -50,11 +50,21 @@ final class Yasui_Request
         return substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], "/")+1);
     }
 
-    private function clean ($data)
+    public function isPost()
+    {
+        return ($_SERVER['REQUEST_METHOD'] == 'POST');
+    }
+
+    public function isAjax()
+    {
+        return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+    }
+
+    private function _clean ($data)
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $data[$key] = $this->clean($value);
+                $data[$key] = $this->_clean($value);
             }
         } else {
             $data = stripslashes($data);

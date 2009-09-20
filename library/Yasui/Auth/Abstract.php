@@ -44,6 +44,11 @@ abstract class Yasui_Auth_Abstract
         return isset($this->_session->identity);
     }
 
+    public function getIdentity()
+    {
+        return $this->_session->identity;
+    }
+
     public function deAuthenticate()
     {
         unset($this->_session->identity);

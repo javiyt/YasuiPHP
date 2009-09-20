@@ -2,10 +2,8 @@
 
 /**
 * Form generation and validation
-* @todo JQuery validation plugin
 * @todo Select elements cant contain equals key values in options
 * @todo Checkbox element can check differents values
-* @todo Create file element
 * @todo Create multiselect element
 *
 */
@@ -36,7 +34,12 @@ abstract class Yasui_Form
         if ($name != null) {
             $this->_formName = $name;
         }
-        $this->_lang = $lang;
+        if (count($lang) > 0) {
+            $this->_lang = $lang;
+        } else {
+            $this->_lang = $this->loadLang();
+        }
+
         return $this;
     }
 
@@ -48,11 +51,19 @@ abstract class Yasui_Form
 
     public function __get($name)
     {
-        if ($this->_formElements[$name]['type'] == 'file') {
-            return $_FILES[$name];
+        return $this->getValue($name, true);
+    }
+
+    private function loadLang()
+    {
+        if (Yasui_Registry::exists('lang')) {
+            $lang = Yasui_Registry::get('lang');
+            $lang->loadFile('Validate');
+            
+            return $lang->getFile('Validate');
         }
 
-        return $this->getValue($name, true);
+        return array();
     }
 
     public function setName ($name=null)
@@ -141,6 +152,14 @@ abstract class Yasui_Form
         return $this;
     }
 
+    public function setDescription($name=null, $description=null)
+    {
+        if ($name != null && $description != null) {
+            $this->_formElements[$name]['description'] = $description;
+        }
+        return $this;
+    }
+
     /*
     *	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS
     *	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS
@@ -170,13 +189,22 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function addElement ($type=null,$name=null,$label=null,$attribs=array())
+    public function addElement ($type=null, $name=null, $label=null, $attribs=array())
     {
         if ($type != null && $name != null && in_array($type,$this->_formTypes)) {
             $this->_formElements[$name]['type'] = $type;
             $this->_formElements[$name]['label'] = (string)$label;
+            if (isset($attribs['description'])) {
+                $this->_formElements[$name]['description'] = $attribs['description'];
+                unset($attribs['description']);
+            }
             $this->_formElements[$name]['attribs'] = $attribs;
         }
+
+        if ($type == 'file') {
+            $this->setType('multipart/form-data');
+        }
+
         return $this;
     }
 
@@ -212,7 +240,9 @@ abstract class Yasui_Form
     {
         if ($name != null) {
             if (array_key_exists($name,$this->_formElements)) {
-                $this->_formElements[$name]['validate'][$type] = $options;
+                if ($type != 'FileExtension' || ($type == 'FileExtension' && $this->_formElements[$name]['type'] == 'file')) {
+                    $this->_formElements[$name]['validate'][$type] = $options;
+                }
             }
         }
         return $this;
@@ -296,14 +326,14 @@ abstract class Yasui_Form
                 case 'select':
                 case 'hidden':
                     if ($withValues) {
-                        $this->_formElements[$name]['attribs']['value'] = $this->getValue($name,false);
+                        $this->_formElements[$name]['attribs']['value'] = $this->getValue($name, false);
                     }
                     $xHtml .= $this->$parseFunc($name);
                     break;
                 case 'radio':
                 case 'checkbox':
                     if ($withValues) {
-                        $this->_formElements[$name]['attribs']['selected'] = $this->getValue($name,false);
+                        $this->_formElements[$name]['attribs']['selected'] = $this->getValue($name, false);
                     }
                     $xHtml .= $this->parseRadio($name);
                     break;
@@ -316,6 +346,10 @@ abstract class Yasui_Form
                 case 'file':
                     $xHtml .= $this->$parseFunc($name);
                     break;
+            }
+
+            if (isset($this->_formElements[$name]['description'])) {
+                $xHtml .= $this->_formElements[$name]['description'];
             }
 
             if ($withErrors) {
@@ -538,6 +572,11 @@ abstract class Yasui_Form
     {
         if ($name != null) {
             if (array_key_exists($name,$this->_formElements)) {
+
+                if ($this->_formElements[$name]['type'] == 'file') {
+                    return $_FILES[$name];
+                }
+
                 if ($this->_formMethod == 'post') {
                     $value = $_POST[$name];
                 } else {
@@ -727,6 +766,15 @@ abstract class Yasui_Form
                                         }
                                         $errors .= $this->_validate->getError()."\n";
                                     }
+                                }
+                                break;
+                            case 'FileExtension':
+                                $path = pathinfo($value['name']);
+                                if (!in_array($path['extendion'],$options)) {
+                                        if ($customNames) {
+                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                        }
+                                        $errors .= $this->_lang['extensionerror'] . "\n";
                                 }
                                 break;
                         }

@@ -62,7 +62,7 @@ final class Yasui_Front
         $this->_postAction[] = $action;
     }
 
-    public function forward($controller='index',$action='index')
+    public function forward($controller='index', $action='index')
     {
         $this->_router->controller = $controller;
         $this->_router->action = $action;
@@ -71,8 +71,15 @@ final class Yasui_Front
 
     public function dispatch ()
     {
-        $class = ucfirst(strtolower($this->_router->controller)).'Controller';
-        $fileclass = APPLICATION_ROOT.CONTROLLER_ROOT.$class.'.php';
+        $class = ucfirst(strtolower($this->_router->controller)) . 'Controller';
+        //If module is null application is working in the default controller directory
+        if ($this->_router->module == null) {
+            $fileclass = APPLICATION_ROOT . CONTROLLER_ROOT . $class . '.php';
+        } else {
+            //Module exists, so the controller have to been located into the folder
+            $fileclass = APPLICATION_ROOT . CONTROLLER_ROOT . $this->_router->module . DIRECTORY_SEPARATOR . $class . '.php';
+        }
+
         if (file_exists($fileclass)) {
             require $fileclass;
             $controller = new $class;
@@ -81,18 +88,18 @@ final class Yasui_Front
                 $this->execute($controller,$action);
             }
 
-            $action = ucfirst(strtolower($this->_router->action)).'Action';
+            $action = ucfirst(strtolower($this->_router->action)) . 'Action';
             $controller->setAction($this->_router->action);
-            $this->execute($controller,$action);
+            $this->execute($controller, $action);
 
             $this->addPostAction('renderLayout');
             
             foreach($this->_postAction as $action) {
-                $this->execute($controller,$action);
+                $this->execute($controller, $action);
             }
         } else {
-            header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-            if (file_exists(LAYOUT_ROOT.'404.phtml')) {
+            header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+            if (file_exists(LAYOUT_ROOT . '404.phtml')) {
                 $this->_view->display('404.phtml');
             } else {
                 echo 'Not Found';

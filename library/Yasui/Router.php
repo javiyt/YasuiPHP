@@ -1,7 +1,7 @@
 <?php
 final class Yasui_Router
 {
-    private $_data = array('controller' => DEFAULT_CONTROLLER,'action' => DEFAULT_ACTION);
+    private $_data = array('module' => null, 'controller' => DEFAULT_CONTROLLER, 'action' => DEFAULT_ACTION);
     private $_routes = array();
     private $_request;
 
@@ -9,10 +9,10 @@ final class Yasui_Router
     {
         $this->_request = Yasui_Registry::get('request');
 
-        $rout = new Yasui_Config('routes.ini','ini');
-        $this->_routes = $rout->toArray();
-
         if ($this->_request->route) {
+            $routIni = new Yasui_Config('routes.ini', 'ini');
+            $this->_routes = $routIni->toArray();
+
             $route = $this->_routeExists($this->_request->route);
             if ($route) {
                 $variables = $this->_map($this->_request->route, $route);
@@ -20,16 +20,42 @@ final class Yasui_Router
                     $this->_request->$key = $value;
                 }
             } else {
-                $router = explode('/',trim($this->_request->route,'/'));
+                $router = explode('/', trim($this->_request->route, '/'));
 
-                $tmp = array_shift($router);
-                if (isset($tmp)) {
-                    $this->_data['controller'] = preg_replace('/\W/','',$tmp);
+                if (count($router) > 0) {
+                    //First parameter in $_GET['router'] can be module or controller
+                    $tmp = preg_replace('/\W/', '', array_shift($router));
+                    if (isset($tmp)) {
+                        if (is_dir(APPLICATION_ROOT . CONTROLLER_ROOT . $tmp)) {
+                            $this->_data['module'] = $tmp;
+                        } else {
+                            $this->_data['controller'] = $tmp;
+                        }
+                    }
                 }
 
-                $tmp = array_shift($router);
-                if (isset($tmp)) {
-                    $this->_data['action'] = preg_replace('/\W/','',$tmp);
+                if (count($router) > 0) {
+                    //Second parameter in $_GET['router'] can be controller or action
+                    $tmp = preg_replace('/\W/', '', array_shift($router));
+                    if (isset($tmp)) {
+                        //Module not null, so the controller hasnt been set, so the second parameter is the controller
+                        //and the thrid parameter is the action
+                        if ($this->_data['module'] != null) {
+                            $this->_data['controller'] = $tmp;
+                        } else {
+                            $this->_data['action'] = $tmp;
+                        }
+                    }
+                }
+
+                if (count($router) > 0) {
+                    //Have to extract third parameter because it is the action
+                    if ($this->_data['module'] != null) {
+                        $tmp = preg_replace('/\W/', '', array_shift($router));
+                        if (isset($tmp)) {
+                            $this->_data['action'] = $tmp;
+                        }
+                    }
                 }
 
                 $limite = count($router);
@@ -38,6 +64,8 @@ final class Yasui_Router
                 }
             }
         }
+
+
     }
 
     public function __get($name)
@@ -49,17 +77,21 @@ final class Yasui_Router
     {
         //If is not set the url's controller
         if (!isset($route['controller'])) {
-            $route['controller'] = DEFAULT_CONTROLLER;
+            $route['controller'] = $this->_data['controller'];
         }
         //If is not set the url's action
         if (!isset($route['action'])) {
-            $route['action'] = DEFAULT_ACTION;
+            $route['action'] = $this->_data['action'];
         }
 
         $url = '';
         foreach($this->_routes as $keyRoute => $valueRoute) {
 
             $keyRouteMap = explode('/',trim($keyRoute,'/'));
+
+            if ((isset($valueRoute['module']) && $route['module'] != $valueRoute['module']) || (!isset($valueRoute['module']) && !in_array($route['module'],$keyRouteMap))) {
+                continue;
+            }
 
             if ((isset($valueRoute['controller']) && $route['controller'] != $valueRoute['controller']) || (!isset($valueRoute['controller']) && !in_array($route['controller'],$keyRouteMap))) {
                 continue;
@@ -69,7 +101,7 @@ final class Yasui_Router
                 continue;
             }
 
-            if (preg_match('/:[a-zA-Z]*/',$keyRoute,$encontrados)) {
+            if (preg_match('/:[a-zA-Z]*/', $keyRoute, $encontrados)) {
                 if (count($encontrados) != (count($route) - 2)) {
                     break;
                 }
@@ -77,7 +109,7 @@ final class Yasui_Router
                 $url = $this->_request->baseURL() . $keyRoute;
 
                 foreach($encontrados as $value) {
-                    $url = str_replace($value,$route[substr($value,1)],$url);
+                    $url = str_replace($value, $route[substr($value, 1)], $url);
                 }
             }
             break;
@@ -98,9 +130,9 @@ final class Yasui_Router
 
     private function _routeExists($route)
     {
-        $routemap = explode('/',trim($route,'/'));
+        $routemap = explode('/', trim($route, '/'));
         foreach($this->_routes as $key => $values) {
-            $keymap = explode('/',trim($key,'/'));
+            $keymap = explode('/', trim($key, '/'));
             if (count($keymap) != count($routemap)) {
                 continue;
             }
@@ -116,9 +148,13 @@ final class Yasui_Router
     private function _map($url, $route)
     {
         $map = $this->_routes[$route];
-        $routemap = explode('/',trim($route,'/'));
-        $urlmap = explode('/',trim($url,'/'));
+        $routemap = explode('/', trim($route, '/'));
+        $urlmap = explode('/', trim($url, '/'));
         $vars = array();
+
+        if (isset($map['module'])) {
+            $this->_data['module'] = $map['module'];
+        }
 
         if (isset($map['controller'])) {
             $this->_data['controller'] = $map['controller'];
@@ -141,5 +177,4 @@ final class Yasui_Router
 
         return $vars;
     }
-
 }

@@ -38,7 +38,13 @@ abstract class Yasui_Controller
      * @var object
      * @access protected
      */
-    protected $_request;
+    protected $_request = null;
+    /**
+     * Contains the Yasui_Router object
+     * @var object
+     * @access protected
+     */
+    protected $_router = null;
 
     /**
      * Constructor of the class
@@ -48,8 +54,25 @@ abstract class Yasui_Controller
     {
         //Instantiate the Yasui_View
         $this->_view = Yasui_View::getInstance();
-        //Get the Yasui_Request object from the registry
-        $this->_request = Yasui_Registry::get('request');
+    }
+
+    protected function _request()
+    {
+        if ($this->_request == null) {
+            //Get the Yasui_Request object from the registry
+            $this->_request = Yasui_Registry::get('request');
+        }
+
+        return $this->_request;
+    }
+
+    protected function _router()
+    {
+        if ($this->_router == null) {
+            //Get the Yasui_Router object from the registry
+            $this->_router = Yasui_Registry::get('router');
+        }
+        return $this->_router;
     }
 
     /**
