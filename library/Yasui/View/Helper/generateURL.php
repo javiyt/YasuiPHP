@@ -2,7 +2,7 @@
 
 class Yasui_View_Helper_generateURL extends Yasui_View_Helper
 {
-    public function generateURL(array $url,$link,$attr=array())
+    public function generateURL(array $url, $link, $attr=array())
     {
         $router = Yasui_Registry::get('router');
         $html = '<a href="' . $router->getURL($url) . '"';

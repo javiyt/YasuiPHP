@@ -87,26 +87,26 @@ final class Yasui_Router
         $url = '';
         foreach($this->_routes as $keyRoute => $valueRoute) {
 
-            $keyRouteMap = explode('/',trim($keyRoute,'/'));
-
-            if ((isset($valueRoute['module']) && $route['module'] != $valueRoute['module']) || (!isset($valueRoute['module']) && !in_array($route['module'],$keyRouteMap))) {
+            $keyRouteMap = explode('/', trim($keyRoute, '/'));
+            
+            if ((isset($valueRoute['module']) && $route['module'] != $valueRoute['module']) || (isset($valueRoute['module']) && !in_array($route['module'], $keyRouteMap))) {
                 continue;
             }
 
-            if ((isset($valueRoute['controller']) && $route['controller'] != $valueRoute['controller']) || (!isset($valueRoute['controller']) && !in_array($route['controller'],$keyRouteMap))) {
+            if ((isset($valueRoute['controller']) && $route['controller'] != $valueRoute['controller']) || (!isset($valueRoute['controller']) && !in_array($route['controller'], $keyRouteMap))) {
                 continue;
             }
 
-            if ((isset($valueRoute['action']) && $route['action'] != $valueRoute['action']) || (!isset($valueRoute['action']) && !in_array($route['action'],$keyRouteMap))) {
+            if ((isset($valueRoute['action']) && $route['action'] != $valueRoute['action']) || (!isset($valueRoute['action']) && !in_array($route['action'], $keyRouteMap))) {
                 continue;
             }
+
+            $url = $this->_request->baseURL() . $keyRoute;
 
             if (preg_match('/:[a-zA-Z]*/', $keyRoute, $encontrados)) {
                 if (count($encontrados) != (count($route) - 2)) {
                     break;
                 }
-
-                $url = $this->_request->baseURL() . $keyRoute;
 
                 foreach($encontrados as $value) {
                     $url = str_replace($value, $route[substr($value, 1)], $url);
