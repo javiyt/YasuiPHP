@@ -67,7 +67,11 @@ class Yasui_View
 
     public function __get($key)
     {
-        return $this->_data[$key];
+        if (isset($this->_data[$key])) {
+            return $this->_data[$key];
+        } else {
+            return null;
+        }
     }
 
     public function __toString()
@@ -78,7 +82,7 @@ class Yasui_View
     public function __call($name,$arguments)
     {
         $file = $name . '.php';
-        $location = $this->findFile($file,'helper');
+        $location = $this->findFile($file, 'helper');
 
         if ($location) {
             require_once $location;
@@ -121,7 +125,7 @@ class Yasui_View
     public function addHelperPath($path='')
     {
         if (is_dir($path)) {
-            if (substr($path,-1) != DIRECTORY_SEPARATOR) {
+            if (substr($path, -1) != DIRECTORY_SEPARATOR) {
                 $path .= DIRECTORY_SEPARATOR;
             }
             $this->_helper_path[] = $path;
@@ -133,7 +137,7 @@ class Yasui_View
         $file = $this->findFile($template);
         if ($file) {
             ob_start();
-            extract($this->_data,EXTR_REFS);
+            extract($this->_data, EXTR_REFS);
             require $file;
 
             return ob_get_clean();
@@ -153,7 +157,7 @@ class Yasui_View
      */
     public function addTitle($string='')
     {
-        if ($string != '' && !in_array($string,$this->_titles)) {
+        if ($string != '' && !in_array($string, $this->_titles)) {
             $this->_titles[] = $string;
         }
         return $this;
@@ -201,7 +205,7 @@ class Yasui_View
     public function addMeta($name='',$content='')
     {
         if ($name != '' && $content != '') {
-            if ($name == 'keywords' && !in_array($content,$this->_metas['keywords'])) {
+            if ($name == 'keywords' && !in_array($content, $this->_metas['keywords'])) {
                 $this->_metas['keywords'][] = $content;
             } else if ($name != 'keywords') {
                 $this->_metas[$name] = $content;
@@ -218,7 +222,7 @@ class Yasui_View
     public function headMetas()
     {
         $metas = '';
-        $metas .= "<meta name=\"title\" content=\"".$this->headTitle()."\" />";
+        $metas .= "<meta name=\"title\" content=\"" . $this->headTitle() . "\" />";
         foreach($this->_metas as $key => $meta) {
             if ($key == 'keywords') {
                 $limite = count($this->_metas['keywords']);
@@ -299,6 +303,34 @@ class Yasui_View
         $this->_pluginConf[$plugin] = $configuration;
     }
 
+    public function doctype($type='')
+    {
+        switch ($type) {
+            case 'HTML_401_STRICT':
+                return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+                break;
+            case 'HTML_401_TRANSITIONAL':
+                return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+                break;
+            case 'HTML_401_FRAMESET':
+                return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
+                break;
+            case 'XHTML_10_TRANSITIONAL':
+                return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+                break;
+            case 'XHTML_10_FRAMESET':
+                return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
+                break;
+            case 'XHTML_11':
+                return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+                break;
+            default:
+            case 'XHTML_10_STRICT':
+                return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+                break;
+        }
+    }
+
     private function findFile($file, $type='template')
     {
         if ($type == 'template') {
@@ -309,8 +341,8 @@ class Yasui_View
 
         if (is_array($paths)) {
             foreach($paths as $path) {
-                if (file_exists($path.$file) && is_readable($path.$file)) {
-                    return $path.$file;
+                if (file_exists($path . $file) && is_readable($path . $file)) {
+                    return $path . $file;
                 }
             }
         }

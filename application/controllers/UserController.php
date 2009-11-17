@@ -1,5 +1,5 @@
 <?php
-require 'application/models/Customer.php';
+require 'application/models/Users.php';
 
 class UserController extends Yasui_Controller
 {
