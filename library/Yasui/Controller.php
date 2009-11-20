@@ -111,7 +111,7 @@ abstract class Yasui_Controller
             $name = str_replace('controller', '', strtolower(get_class($this)));
             $this->_view->addTemplatePath(VIEWS_ROOT . $name . DIRECTORY_SEPARATOR);
             //Set the content view with the actual view script
-            $this->_view->content = $this->_view->fetch($this->_action . '.phtml');
+            $this->_view->content = $this->_view->fetch($this->_action . VIEWS_EXTENSION);
         } else {
             //If the output is another format, not HTML, returns the output
             echo $this->_output;

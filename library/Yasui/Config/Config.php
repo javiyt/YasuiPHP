@@ -2,18 +2,18 @@
 class Yasui_Config
 {
     private $_adapter = null;
-    private $_types = array('php','ini');
+    private $_types = array('php', 'ini');
 
-    public function __construct($file,$type='php')
+    public function __construct($file, $type='php')
     {
-        if (!in_array($type,$this->_types)) {
+        if (!in_array($type, $this->_types)) {
             throw new Exception('Config file not recognized');
         }
 
-        if (file_exists(CONFIG_ROOT.$file)) {
-            require_once 'Yasui/Config/Adapter/'.ucfirst($type).'.php';
+        if (file_exists(CONFIG_ROOT . $file)) {
+            require_once 'Yasui/Config/Adapter/' . ucfirst($type) . '.php';
 
-            $adapter = 'Yasui_Config_Adapter_'.ucfirst($type);
+            $adapter = 'Yasui_Config_Adapter_' . ucfirst($type);
 
             $this->_adapter = new $adapter($file);
         }

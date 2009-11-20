@@ -50,12 +50,16 @@ if (!defined('FORMS_ROOT')) {
 
 //Define the default controller, if it is not defined before
 if (!defined('DEFAULT_CONTROLLER')) {
-    define('DEFAULT_CONTROLLER','index');
+    define('DEFAULT_CONTROLLER', 'index');
 }
 
 //Define the default action, if it is not defined before
 if (!defined('DEFAULT_ACTION')) {
-    define('DEFAULT_ACTION','index');
+    define('DEFAULT_ACTION', 'index');
+}
+
+if (!defined('VIEWS_EXTENSION')) {
+    define('VIEWS_EXTENSION', '.phtml');
 }
 
 //Require neccesary files to execute the framework
@@ -67,16 +71,16 @@ require 'Yasui/Router.php';
 require 'Yasui/View/View.php';
 
 //Define the autoload function, if a required script is not loaded, the autoload function try to load it
-function __autoload ($class)
+function __autoload($class)
 {
     //Instanstiate autoload class
     $autoload = new Yasui_Autoload($class);
 }
 
 //Create the request class and save it into the register
-Yasui_Registry::set('request',new Yasui_Request());
+Yasui_Registry::set('request', new Yasui_Request());
 //Create the router class and save it into the register
-Yasui_Registry::set('router',new Yasui_Router());
+Yasui_Registry::set('router', new Yasui_Router());
 
 //Create the front controller
 $front = new Yasui_Front();

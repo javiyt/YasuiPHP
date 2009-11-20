@@ -47,19 +47,19 @@ class Yasui_Session_Adapter_DB extends Yasui_Session_Abstract
 
     public function read($session_id)
     {
-        $tmp = $this->_dbAdapter->dbAdapter()->getOne($this->_tableConfig['table'],$this->_tableConfig['data'],array($this->_tableConfig['sid'] => $session_id));
+        $tmp = $this->_dbAdapter->dbAdapter()->getOne($this->_tableConfig['table'], $this->_tableConfig['data'], array($this->_tableConfig['sid'] => $session_id));
         return $tmp[$this->_tableConfig['data']];
     }
 
-    public function write($session_id,$session_data)
+    public function write($session_id, $session_data)
     {
-        if ($this->_dbAdapter->dbAdapter()->exists($this->_tableConfig['table'],$this->_tableConfig['sid'],$session_id)) {
+        if ($this->_dbAdapter->dbAdapter()->exists($this->_tableConfig['table'], $this->_tableConfig['sid'], $session_id)) {
             $update = array(
                 $this->_tableConfig['modified'] => 'UNIX_TIMESTAMP()',
                 $this->_tableConfig['lifetime'] => '1800',
                 $this->_tableConfig['data'] => $session_data
             );
-            $this->_dbAdapter->dbAdapter()->insert($this->_tableConfig['table'],array($this->_tableConfig['sid'] => $session_id),$update);
+            $this->_dbAdapter->dbAdapter()->insert($this->_tableConfig['table'], array($this->_tableConfig['sid'] => $session_id), $update);
 
         } else {
             $insert = array(
@@ -68,19 +68,19 @@ class Yasui_Session_Adapter_DB extends Yasui_Session_Abstract
                 $this->_tableConfig['lifetime'] => '1800',
                 $this->_tableConfig['data'] => $session_data
             );
-            $this->_dbAdapter->dbAdapter()->insert($this->_tableConfig['table'],$insert);
+            $this->_dbAdapter->dbAdapter()->insert($this->_tableConfig['table'], $insert);
         }
     }
 
     public function destroy($session_id)
     {
-        $this->_dbAdapter->dbAdapter()->delete($this->_tableConfig['table'],array($this->_tableConfig['sid'] => $session_id));
+        $this->_dbAdapter->dbAdapter()->delete($this->_tableConfig['table'], array($this->_tableConfig['sid'] => $session_id));
     }
 
     public function gc($max_lifetime)
     {
-        $where = $this->_tableConfig['lifetime'] . ' + ' .$this->_tableConfig['modified'] . ' < NOW()';
-        $this->_dbAdapter->dbAdapter()->delete($this->_tableConfig['table'],$where);
+        $where = $this->_tableConfig['lifetime'] . ' + ' . $this->_tableConfig['modified'] . ' < NOW()';
+        $this->_dbAdapter->dbAdapter()->delete($this->_tableConfig['table'], $where);
     }
 
 }

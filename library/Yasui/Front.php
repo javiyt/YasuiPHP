@@ -38,7 +38,7 @@ final class Yasui_Front
      * Constructor of the class
      * @access public
      */
-    public function __construct ()
+    public function __construct()
     {
         //Get the Yasui_Router from the registry
         $this->_router = Yasui_Registry::get('router');
@@ -52,12 +52,12 @@ final class Yasui_Front
         $this->addPostAction('renderView');
     }
 
-    public function addPreAction ($action)
+    public function addPreAction($action)
     {
         $this->_preAction[] = $action;
     }
 
-    public function addPostAction ($action)
+    public function addPostAction($action)
     {
         $this->_postAction[] = $action;
     }
@@ -69,7 +69,7 @@ final class Yasui_Front
         $this->dispatch();
     }
 
-    public function dispatch ()
+    public function dispatch()
     {
         $class = ucfirst(strtolower($this->_router->controller)) . 'Controller';
         //If module is null application is working in the default controller directory
@@ -85,7 +85,7 @@ final class Yasui_Front
             $controller = new $class;
             
             foreach ($this->_preAction as $action) {
-                $this->execute($controller,$action);
+                $this->execute($controller, $action);
             }
 
             $action = ucfirst(strtolower($this->_router->action)) . 'Action';
@@ -99,22 +99,22 @@ final class Yasui_Front
             }
         } else {
             header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
-            if (file_exists(LAYOUT_ROOT . '404.phtml')) {
-                $this->_view->display('404.phtml');
+            if (file_exists(LAYOUT_ROOT . '404' . VIEWS_EXTENSION)) {
+                $this->_view->display('404' . VIEWS_EXTENSION);
             } else {
                 echo 'Not Found';
             }
         }
     }
 
-    private function execute($controller,$action)
+    private function execute($controller, $action)
     {
-        if (method_exists($controller,$action)) {
-            call_user_func(array($controller,$action));
+        if (method_exists($controller, $action)) {
+            call_user_func(array($controller, $action));
         } else {
-            header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-            if (file_exists(LAYOUT_ROOT.'404.phtml')) {
-                $this->_view->display('404.phtml');
+            header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+            if (file_exists(LAYOUT_ROOT . '404' . VIEWS_EXTENSION)) {
+                $this->_view->display('404' . VIEWS_EXTENSION);
             } else {
                 echo 'Not Found';
             }

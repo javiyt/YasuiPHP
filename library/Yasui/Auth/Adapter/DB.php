@@ -21,7 +21,7 @@ class Yasui_Auth_Adapter_DB extends Yasui_Auth_Abstract
             return false;
         }
 
-        $auth = $this->_dbAdapter->dbAdapter()->getOne($this->_location,$this->_identity,array($this->_identity => $identity, $this->_credential => $this->_getCrypCredential($credential)));
+        $auth = $this->_dbAdapter->dbAdapter()->getOne($this->_location, $this->_identity, array($this->_identity => $identity, $this->_credential => $this->_getCrypCredential($credential)));
 
         if (is_array($auth)) {
             $this->_session->identity = $auth[$this->_identity];

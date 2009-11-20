@@ -8,7 +8,7 @@ class Yasui_Filter
         $this->_unicodeEnabled = (@preg_match('/\pL/u', 'a')) ? true : false;
     }
 
-    public function filterAlnum ($string=null,$whiteSpace=false)
+    public function filterAlnum($string=null, $whiteSpace=false)
     {
         $whiteSpace = $whiteSpace ? '\s' : '';
 
@@ -27,10 +27,10 @@ class Yasui_Filter
             //The Alphabet means each language's alphabet.
             $pattern = '/[^\p{L}\p{N}' . $whiteSpace . ']/u';
         }
-        return preg_replace($pattern, '', (string) $string);
+        return preg_replace($pattern, '', (string)$string);
     }
 
-    public function filterAlpha ($string=null,$whiteSpace=false,$allAlphabets=false)
+    public function filterAlpha($string=null, $whiteSpace=false, $allAlphabets=false)
     {
         $whiteSpace = $whiteSpace ? '\s' : '';
 
@@ -49,10 +49,10 @@ class Yasui_Filter
             //The Alphabet means each language's alphabet.
             $pattern = '/[^\p{L}' . $whiteSpace . ']/u';
         }
-        return preg_replace($pattern, '', (string) $string);
+        return preg_replace($pattern, '', (string)$string);
     }
 
-    public function filterDigits ($value=null)
+    public function filterDigits($value=null)
     {
         if (!$this->_unicodeEnabled) {
             // POSIX named classes are not supported, use alternative 0-9 match
@@ -65,10 +65,10 @@ class Yasui_Filter
             $pattern = '/[\p{^N}]/';
         }
 
-        return preg_replace($pattern, '', (string) $value);
+        return preg_replace($pattern, '', (string)$value);
     }
 
-    public function filterHtmlEntities ($string=null,$charset=null)
+    public function filterHtmlEntities($string=null, $charset=null)
     {
         if ($charset === null && $this->utf8_compliant($string)) {
             $_charSet = 'UTF-8';
@@ -78,34 +78,34 @@ class Yasui_Filter
         return htmlentities($string,ENT_COMPAT,$_charSet);
     }
 
-    public function filterInt ($value=null)
+    public function filterInt($value=null)
     {
-        return (int) $value;
+        return (int)$value;
     }
 
-    public function filterNewLines ($string=null)
+    public function filterNewLines($string=null)
     {
         return str_replace(array("\n", "\r"), '', $string);
     }
 
-    public function filterStringLower ($string=null)
+    public function filterStringLower($string=null)
     {
         return strtolower($string);
     }
 
-    public function filterStringUpper ($string=null)
+    public function filterStringUpper($string=null)
     {
         return strtoupper($string);
     }
 
-    public function filterTags ($string=null)
+    public function filterTags($string=null)
     {
         return strip_tags($string);
     }
 
-    public function filterTrim ($string=null)
+    public function filterTrim($string=null)
     {
-        return trim((string) $string);
+        return trim((string)$string);
     }
 
     private function utf8_compliant($str)
@@ -117,6 +117,6 @@ class Yasui_Filter
         // modifier is used, then it's valid UTF-8. If the UTF-8 is somehow
         // invalid, nothing at all will match, even if the string contains
         // some valid sequences
-        return (preg_match('/^.{1}/us',$str) == 1);
+        return (preg_match('/^.{1}/us', $str) == 1);
     }
 }

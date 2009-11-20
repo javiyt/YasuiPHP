@@ -1,14 +1,14 @@
 <?php
 require_once 'Yasui/Filter/Filter.php';
 
-define('VALIDATE_NUM',          '0-9');
-define('VALIDATE_SPACE',        '\s');
-define('VALIDATE_ALPHA_LOWER',  'a-z');
-define('VALIDATE_ALPHA_UPPER',  'A-Z');
-define('VALIDATE_ALPHA',        VALIDATE_ALPHA_LOWER . VALIDATE_ALPHA_UPPER);
+define('VALIDATE_NUM', '0-9');
+define('VALIDATE_SPACE', '\s');
+define('VALIDATE_ALPHA_LOWER','a-z');
+define('VALIDATE_ALPHA_UPPER', 'A-Z');
+define('VALIDATE_ALPHA', VALIDATE_ALPHA_LOWER . VALIDATE_ALPHA_UPPER);
 define('VALIDATE_EALPHA_LOWER', VALIDATE_ALPHA_LOWER . 'áéíóúýàèìòùäëïöüÿâêîôûãñõ¨åæç½ðøþß');
 define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . 'ÁÉÍÓÚÝÀÈÌÒÙÄËÏÖÜ¾ÂÊÎÔÛÃÑÕ¦ÅÆÇ¼ÐØÞ');
-define('VALIDATE_EALPHA',       VALIDATE_EALPHA_LOWER . VALIDATE_EALPHA_UPPER);
+define('VALIDATE_EALPHA', VALIDATE_EALPHA_LOWER . VALIDATE_EALPHA_UPPER);
 
 class Yasui_Validate
 {
@@ -36,7 +36,7 @@ class Yasui_Validate
         }
     }
 
-    public function validateAlnum($string=null,$whiteSpace=false,$allAlphabets=false)
+    public function validateAlnum($string=null, $whiteSpace=false, $allAlphabets=false)
     {
         if ((string)$string !== '') {
 
@@ -59,7 +59,7 @@ class Yasui_Validate
         }
     }
 
-    public function validateAlpha($string=null,$whiteSpace=false,$allAlphabets=false)
+    public function validateAlpha($string=null, $whiteSpace=false, $allAlphabets=false)
     {
         if ((string)$string !== '') {
             $validate = new Validate();
@@ -106,52 +106,52 @@ class Yasui_Validate
         }
     }
 
-    public function validateMoreThan($string=null,$limit=null)
+    public function validateMoreThan($string=null, $limit=null)
     {
         if (is_int($string)) {
             if ((int) $string > (int) $limit) {
                 return true;
             } else {
-                $this->_error = $this->lang['nomore'].' '.(int) $limit;
+                $this->_error = $this->lang['nomore'] . ' ' . (int)$limit;
                 return false;
             }
         } else {
-            if (strlen((string) $string) > (int) $limit) {
+            if (strlen((string)$string) > (int)$limit) {
                 return true;
             } else {
-                $this->_error = $this->lang['stringnomore'].' '.(int) $limit.' '.$this->lang['characters'];
+                $this->_error = $this->lang['stringnomore'] . ' ' . (int)$limit . ' ' . $this->lang['characters'];
                 return false;
             }
         }
     }
 
-    public function validateLessThan($string=null,$limit=null)
+    public function validateLessThan($string=null, $limit=null)
     {
         if (is_int($string)) {
-            if ((int) $string < (int) $limit) {
+            if ((int)$string < (int)$limit) {
                 return true;
             } else {
-                $this->_error = $this->lang['noless'].' '.(int) $limit;
+                $this->_error = $this->lang['noless'] . ' ' . (int)$limit;
                 return false;
             }
         } else {
-            if (strlen((string) $string) < (int) $limit) {
+            if (strlen((string)$string) < (int)$limit) {
                 return true;
             } else {
-                $this->_error = $this->lang['noless'].' '.(int) $limit.' '.$this->lang['characters'];
+                $this->_error = $this->lang['noless'] . ' ' . (int)$limit . ' ' . $this->lang['characters'];
                 return false;
             }
         }
     }
 
-    public function validateBetween($string=null,$min=null,$max=null)
+    public function validateBetween($string=null, $min=null, $max=null)
     {
-        return ($this->validateMoreThan($string,$min) && $this->validateLessThan($string,$max));
+        return ($this->validateMoreThan($string, $min) && $this->validateLessThan($string, $max));
     }
 
-    public function validateRegExp($string=null,$regexp=null)
+    public function validateRegExp($string=null, $regexp=null)
     {
-        if (!preg_match('/'.$regexp.'/',$string)) {
+        if (!preg_match('/' . $regexp . '/', $string)) {
             $this->_error = $this->lang['valueinvalid'];
             return false;
         } else {
@@ -206,10 +206,10 @@ class Yasui_Validate
         return true;
     }
 
-    public function validateInarray($value=null,$array=null)
+    public function validateInarray($value=null, $array=null)
     {
         if ($value != null && $array != null) {
-            if (!in_array($value,$array)) {
+            if (!in_array($value, $array)) {
                 $this->_error = $this->lang['valueinvalid'];
                 return false;
             }
@@ -221,6 +221,6 @@ class Yasui_Validate
 
     public function getError()
     {
-            return $this->_error;
+        return $this->_error;
     }
 }

@@ -20,9 +20,9 @@ class Yasui_Auth
         }
 
         if (!isset($this->_adapter[$adapter])) {
-            require 'Yasui/Auth/Adapter/'.$adapter.'.php';
+            require 'Yasui/Auth/Adapter/' . $adapter . '.php';
             
-            $class = 'Yasui_Auth_Adapter_'.$adapter;
+            $class = 'Yasui_Auth_Adapter_' . $adapter;
             $this->_adapter[$adapter] = new $class;
         }
 

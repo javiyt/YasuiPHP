@@ -32,8 +32,8 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
     protected function _connect()
     {
         if ($this->_conexion == null) {
-            $this->_conexion = mysql_connect($this->_connectData['server'],$this->_connectData['user'],$this->_connectData['password']);
-            mysql_select_db($this->_connectData['database'],$this->_conexion);
+            $this->_conexion = mysql_connect($this->_connectData['server'], $this->_connectData['user'], $this->_connectData['password']);
+            mysql_select_db($this->_connectData['database'], $this->_conexion);
         }
     }
 
@@ -55,7 +55,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @return int
      * @access public
      */
-    public function exists($tabla='',$campo=array(),$valor=array(),$excluir=array())
+    public function exists($tabla='', $campo=array(), $valor=array(), $excluir=array())
     {
         $campos = '';
         $select = '';
@@ -91,7 +91,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
                 $noincluir .= "$key != '$value'";
             }
             if ($noincluir != '') {
-                $noincluir = 'AND '.$noincluir;
+                $noincluir = 'AND ' . $noincluir;
             }
         }
         $rs = $this->_query("SELECT $select FROM $tabla WHERE $campos $noincluir");
@@ -109,10 +109,10 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param array $valores
      * @return array
      */
-    public function getOne($tabla='',$campos=array(),$valores=array())
+    public function getOne($tabla='', $campos=array(), $valores=array())
     {
         if (is_array($campos)) {
-            $select = implode(',',$campos);
+            $select = implode(',', $campos);
         } else {
             $select = $campos;
         }
@@ -132,7 +132,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
 
             }
             if ($where != '') {
-                $where = 'WHERE '.$where;
+                $where = 'WHERE ' . $where;
             }
         }
 
@@ -152,11 +152,11 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param array $order
      * @return array
      */
-    public function getAll($tabla='',$campos=array(),$valores=array(),$order=array())
+    public function getAll($tabla='', $campos=array(), $valores=array(), $order=array())
     {
         $select = '*';
         if (is_array($campos) && count($campos) > 0) {
-            $select = implode(',',$campos);
+            $select = implode(',', $campos);
         } else if (is_string($campos) && trim($campos) != '') {
             $select = $campos;
         }
@@ -180,12 +180,12 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
 
         $orderby = '';
         if (is_array($order)) {
-            $orderby = implode(',',$order);
+            $orderby = implode(',', $order);
         } else if (is_string($order) && trim($order) != '') {
             $orderby = $order;
         }
         if ($orderby != '') {
-            $orderby = 'ORDER BY '.$orderby;
+            $orderby = 'ORDER BY ' . $orderby;
         }
         
         $rs = $this->_query("SELECT $select FROM $tabla $where $orderby");
@@ -207,7 +207,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param array $valores
      * @return int
      */
-    public function insert($tabla='',$valores=array())
+    public function insert($tabla='', $valores=array())
     {
         if (!is_array($valores)) {
             return false;
@@ -242,7 +242,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param array $valores
      * @return int
      */
-    public function update($tabla='',$where=array(),$valores=array())
+    public function update($tabla='', $where=array(), $valores=array())
     {
         $donde = '';
         if (!is_array($where)) {
@@ -286,7 +286,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param array $valores
      * @return int
      */
-    public function delete($tabla='',$valores=array())
+    public function delete($tabla='', $valores=array())
     {
         $where = '';
         $valores = $this->_prepare($valores);
@@ -323,14 +323,14 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      * @param string $tabla
      * @param array $campos
      */
-    public function num($tabla='',$campos=array())
+    public function num($tabla='', $campos=array())
     {
         if (!is_array($campos)) {
             return false;
         }
 
         $valores = $this->_prepare($valores);
-        $select = implode(',',array_keys($campos));
+        $select = implode(',', array_keys($campos));
 
         $where = '';
         foreach($campos as $key => $value) {

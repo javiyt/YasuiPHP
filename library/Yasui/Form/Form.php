@@ -21,15 +21,15 @@ abstract class Yasui_Form
     private $_formAction = null;
     private $_formAttribs = array();
     private $_formElements = array();
-    private $_formTypes = array('text','textarea','button','submit','image','select','radio','checkbox','password','hidden','file');
-    private $_formDecorators = array('HtmlTag' => array('tag' => 'dd'),'Label' => array('tag' => 'dt'));
+    private $_formTypes = array('text', 'textarea', 'button', 'submit', 'image', 'select', 'radio', 'checkbox', 'password', 'hidden', 'file');
+    private $_formDecorators = array('HtmlTag' => array('tag' => 'dd'), 'Label' => array('tag' => 'dt'));
     private $_stopNotValid = false;
     private $_error = null;
     private $_lang = array();
     private $_filter = null;
     private $_validate = null;
 
-    public function __construct ($name=null,$lang=array())
+    public function __construct($name=null, $lang=array())
     {
         if ($name != null) {
             $this->_formName = $name;
@@ -46,7 +46,7 @@ abstract class Yasui_Form
     public function __toString()
     {
         $sent = $this->formSent();
-        return $this->parseForm($sent,$sent);
+        return $this->parseForm($sent, $sent);
     }
 
     public function __get($name)
@@ -66,7 +66,7 @@ abstract class Yasui_Form
         return array();
     }
 
-    public function setName ($name=null)
+    public function setName($name=null)
     {
         if ($name != null) {
             $this->_formName = $name;
@@ -74,7 +74,7 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function setId ($id=null)
+    public function setId($id=null)
     {
         if ($id != null) {
             $this->_formId = $id;
@@ -82,9 +82,9 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function setMethod ($method=null)
+    public function setMethod($method=null)
     {
-        if ($method != null && in_array($method,array('post','get'))) {
+        if ($method != null && in_array($method, array('post', 'get'))) {
             $this->_formMethod = $method;
         }
         return $this;
@@ -92,7 +92,7 @@ abstract class Yasui_Form
 
     public function setType ($type=null)
     {
-        if ($type != null && in_array($type,array('application/x-www-form-urlencoded','multipart/form-data','text/plain'))) {
+        if ($type != null && in_array($type, array('application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'))) {
             $this->_formType = $type;
         }
         return $this;
@@ -108,10 +108,10 @@ abstract class Yasui_Form
 
     public function setStopNotValid($stop=false)
     {
-        $this->_stopNotValid = (boolean) $stop;
+        $this->_stopNotValid = (boolean)$stop;
     }
 
-    public function setDecorators($HtmlTag=array(),$Label=array())
+    public function setDecorators($HtmlTag=array(), $Label=array())
     {
         if (is_array($HtmlTag) && is_array($Label)) {
             if (isset($HtmlTag['tag'])) {
@@ -124,7 +124,7 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function setValue($name=null,$value=null)
+    public function setValue($name=null, $value=null)
     {
         if ($name != null && $value != null) {
             if ($this->_formElements[$name]['type'] != 'select' && $this->_formElements[$name]['type'] != 'radio' && $this->_formElements[$name]['type'] != 'checkbox') {
@@ -144,7 +144,7 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function setLabel($name=null,$label=null)
+    public function setLabel($name=null, $label=null)
     {
         if ($name != null && $label != null) {
             $this->_formElements[$name]['label'] = $label;
@@ -166,7 +166,7 @@ abstract class Yasui_Form
     *	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS ADD FUNCTIONS	ADD FUNCTIONS
     */
 
-    public function addAttrib ($name=null,$value=null)
+    public function addAttrib ($name=null, $value=null)
     {
         if ($name != null) {
             if ($value == null) {
@@ -183,7 +183,7 @@ abstract class Yasui_Form
     {
         if (is_array($attribs)) {
             foreach ($attribs as $key => $value) {
-                $this->addAttrib($key,$value);
+                $this->addAttrib($key, $value);
             }
         }
         return $this;
@@ -191,7 +191,7 @@ abstract class Yasui_Form
 
     public function addElement ($type=null, $name=null, $label=null, $attribs=array())
     {
-        if ($type != null && $name != null && in_array($type,$this->_formTypes)) {
+        if ($type != null && $name != null && in_array($type, $this->_formTypes)) {
             $this->_formElements[$name]['type'] = $type;
             $this->_formElements[$name]['label'] = (string)$label;
             if (isset($attribs['description'])) {
@@ -208,7 +208,7 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function addFilter($name=null,$type=null,$options=array())
+    public function addFilter($name=null, $type=null, $options=array())
     {
         if ($name != null) {
             if (array_key_exists($name,$this->_formElements)) {
@@ -218,10 +218,10 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function addFilters($name=null,$type=null)
+    public function addFilters($name=null, $type=null)
     {
         if ($name != null) {
-            if (array_key_exists($name,$this->_formElements) && is_array($type)) {
+            if (array_key_exists($name, $this->_formElements) && is_array($type)) {
                 foreach ($type as $filter) {
                     if (is_array($filter)) {
                         $filterType = $filter[0];
@@ -236,10 +236,10 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function addValidate($name=null,$type=null,$options=array())
+    public function addValidate($name=null, $type=null, $options=array())
     {
         if ($name != null) {
-            if (array_key_exists($name,$this->_formElements)) {
+            if (array_key_exists($name, $this->_formElements)) {
                 if ($type != 'FileExtension' || ($type == 'FileExtension' && $this->_formElements[$name]['type'] == 'file')) {
                     $this->_formElements[$name]['validate'][$type] = $options;
                 }
@@ -248,10 +248,10 @@ abstract class Yasui_Form
         return $this;
     }
 
-    public function addValidates($name=null,$type=null)
+    public function addValidates($name=null, $type=null)
     {
         if ($name != null) {
-            if (array_key_exists($name,$this->_formElements) && is_array($type)) {
+            if (array_key_exists($name, $this->_formElements) && is_array($type)) {
                 foreach ($type as $validate) {
                     if (is_array($validate)) {
                         $validateType = $validate[0];
@@ -271,7 +271,7 @@ abstract class Yasui_Form
     * PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS PARSE FUNCTIONS
     */
 
-    private function parseForm ($withErrors=false,$withValues=false)
+    private function parseForm ($withErrors=false, $withValues=false)
     {
         $xHtml = '<form';
 
@@ -295,7 +295,7 @@ abstract class Yasui_Form
             $xHtml .= " enctype=\"{$this->_formType}\"";
         }
 
-        if ($this->_formMethod != null && in_array($this->_formMethod,array('post','get'))) {
+        if ($this->_formMethod != null && in_array($this->_formMethod, array('post', 'get'))) {
             $xHtml .= " method=\"{$this->_formMethod}\"";
         } else {
             $xHtml .= ' method="post"';
@@ -367,29 +367,29 @@ abstract class Yasui_Form
         return $xHtml;
     }
 
-    private function parseLabel ($name=null)
+    private function parseLabel($name=null)
     {
         $xHtml = '';
         if ($name != null) {
             if ($this->_formDecorators['Label']['tag'] != '') {
-                $xHtml .= '<'.$this->_formDecorators['Label']['tag'].'>';
+                $xHtml .= '<' . $this->_formDecorators['Label']['tag'] . '>';
             }
 
             $xHtml .= "<label for=\"$name\">{$this->_formElements[$name]['label']}</label>";
             
             if ($this->_formDecorators['Label']['tag'] != '') {
-                $xHtml .= '</'.$this->_formDecorators['Label']['tag'].'>';
+                $xHtml .= '</' . $this->_formDecorators['Label']['tag'] . '>';
             }
         }
         return $xHtml;
     }
 
-    private function parseElementDecorator ($xHtml=null)
+    private function parseElementDecorator($xHtml=null)
     {
         if ($xHtml != null && $this->_formDecorators['HtmlTag']['tag'] != '') {
-            $xHtml = '<'.$this->_formDecorators['HtmlTag']['tag'].'>'.
+            $xHtml = '<' . $this->_formDecorators['HtmlTag']['tag'] . '>' .
                     $xHtml .
-                    '</'.$this->_formDecorators['HtmlTag']['tag'].'>';
+                    '</' . $this->_formDecorators['HtmlTag']['tag'] . '>';
         }
         return $xHtml;
     }
@@ -398,7 +398,7 @@ abstract class Yasui_Form
     {
         $xHtml = '';
         if (!$this->validateField($name)) {
-            $errors = split("\n",$this->_error);
+            $errors = split("\n", $this->_error);
             $xHtml = '<ul>';
             foreach ($errors as $error) {
                 if ((string) $error !== '') {
@@ -410,7 +410,7 @@ abstract class Yasui_Form
         return $xHtml;
     }
 
-    private function parseText ($name=null)
+    private function parseText($name=null)
     {
         $xHtml = '';
         if ($name != null) {
@@ -423,7 +423,7 @@ abstract class Yasui_Form
         return $this->parseElementDecorator($xHtml);
     }
 
-    private function parseFile ($name=null)
+    private function parseFile($name=null)
     {
         $xHtml = '';
         if ($name != null) {
@@ -436,7 +436,7 @@ abstract class Yasui_Form
         return $this->parseElementDecorator($xHtml);
     }
 
-    private function parsePassword ($name=null)
+    private function parsePassword($name=null)
     {
         $xHtml = '';
         if ($name != null) {
@@ -450,7 +450,7 @@ abstract class Yasui_Form
     }
 
 
-    private function parseTextarea ($name=null)
+    private function parseTextarea($name=null)
     {
         $xHtml = '';
         if ($name != null) {
@@ -465,18 +465,18 @@ abstract class Yasui_Form
         return $this->parseElementDecorator($xHtml);
     }
 
-    private function parseButton ($name=null)
+    private function parseButton($name=null)
     {
         $xHtml = '';
         if ($name != null) {
             $xHtml .= "<input type=\"{$this->_formElements[$name]['type']}\" name=\"$name\" id=\"$name\"";
             if (isset($this->_formElements[$name]['label']) && $this->_formElements[$name]['label'] != null) {
                 if ($this->_formElements[$name]['type'] == 'image') {
-                    $xHtml .= ' src="'.$this->_formElements[$name]['label'].'"';
+                    $xHtml .= ' src="' . $this->_formElements[$name]['label'] . '"';
                     unset($this->_formElements[$name]['attribs']['src']);
                 }
                 else {
-                    $xHtml .= ' value="'.$this->_formElements[$name]['label'].'"';
+                    $xHtml .= ' value="' . $this->_formElements[$name]['label'] . '"';
                     unset($this->_formElements[$name]['attribs']['value']);
                 }
             }
@@ -488,7 +488,7 @@ abstract class Yasui_Form
         return $this->parseElementDecorator($xHtml);
     }
 
-    private function parseSelect ($name=null)
+    private function parseSelect($name=null)
     {
         $xHtml = '';
         $optionsArray = array();
@@ -523,13 +523,13 @@ abstract class Yasui_Form
                 }
             }
             $xHtml .= '</select>';
-            $this->addValidate($name,'InArray',array('array' => $optionsArray));
+            $this->addValidate($name,'InArray', array('array' => $optionsArray));
         }
 
         return $this->parseElementDecorator($xHtml);
     }
 
-    private function parseRadio ($name=null)
+    private function parseRadio($name=null)
     {
         $xHtml = '';
         if ($name != null) {
@@ -568,10 +568,10 @@ abstract class Yasui_Form
     * FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS
     * FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS FILTER FUNCTIONS
     */
-    public function getValue($name=null,$filtered=true)
+    public function getValue($name=null, $filtered=true)
     {
         if ($name != null) {
-            if (array_key_exists($name,$this->_formElements)) {
+            if (array_key_exists($name, $this->_formElements)) {
 
                 if ($this->_formElements[$name]['type'] == 'file') {
                     return $_FILES[$name];
@@ -592,13 +592,13 @@ abstract class Yasui_Form
                     foreach ($this->_formElements[$name]['filters'] as $filter => $options) {
                         switch ($filter) {
                             case 'Alnum':
-                                $value = $this->_filter->filterAlnum($value,$options['whiteSpace'],$options['allAlphabets']);
+                                $value = $this->_filter->filterAlnum($value, $options['whiteSpace'], $options['allAlphabets']);
                                 break;
                             case 'Alpha':
-                                $value = $this->_filter->filterAlpha($value,$options['whiteSpace'],$options['allAlphabets']);
+                                $value = $this->_filter->filterAlpha($value, $options['whiteSpace'], $options['allAlphabets']);
                                 break;
                             case 'HtmlEntities':
-                                $value = $this->_filter->filterHtmlEntities($value,$options['charset']);
+                                $value = $this->_filter->filterHtmlEntities($value, $options['charset']);
                                 break;
                             case 'Digits':
                             case 'Int':
@@ -640,10 +640,10 @@ abstract class Yasui_Form
     * VALIDATE FUNCTIONS VALIDATE FUNCTIONS VALIDATE FUNCTIONS VALIDATE FUNCTIONS VALIDATE FUNCTIONS VALIDATE FUNCTIONS
     */
 
-    public function validateField($name=null,$customNames=false)
+    public function validateField($name=null, $customNames=false)
     {
         if ($name != null) {
-            if (array_key_exists($name,$this->_formElements)) {
+            if (array_key_exists($name, $this->_formElements)) {
                 $value = $this->getValue($name);
 
                 if (is_array($this->_formElements[$name]['validate'])) {
@@ -658,121 +658,121 @@ abstract class Yasui_Form
                             case 'Required':
                                 if (!$this->_validate->validateRequired($value)) {
                                     if ($customNames) {
-                                        $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                        $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                     }
-                                    $errors .= $this->_validate->getError()."\n";
+                                    $errors .= $this->_validate->getError() . "\n";
                                 }
                             break;
                             case 'InArray':
                                 if (!$this->_validate->validateInarray($value, $options['array'])) {
                                     if ($customNames) {
-                                        $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                        $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                     }
-                                    $errors .= $this->_validate->getError()."\n";
+                                    $errors .= $this->_validate->getError() . "\n";
                                 }
                                 break;
                             case 'Alnum':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateAlnum($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateAlnum($value, $options['whiteSpace'], $options['allAlphabets'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'Alpha':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateAlpha($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateAlpha($value, $options['whiteSpace'], $options['allAlphabets'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'Digits':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateDigits($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateDigits($value, $options['whiteSpace'], $options['allAlphabets'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'Int':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateInt($value,$options['whiteSpace'],$options['allAlphabets'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateInt($value, $options['whiteSpace'], $options['allAlphabets'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'Between':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateBetween($value,$options['min'],$options['max'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateBetween($value, $options['min'], $options['max'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'MoreThan':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateMoreThan($value,$options['limit'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateMoreThan($value, $options['limit'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'LessThan':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateLessThan($value,$options['limit'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateLessThan($value, $options['limit'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'Email':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
                                     if (!$this->_validate->validateEmail($value)) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'URL':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
                                     if (!$this->_validate->validateURL($value)) {
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'RegExp':
-                                if ($value != '' || array_key_exists('Required',$this->_formElements[$name]['validate'])) {
-                                    if (!$this->_validate->validateRegExp($value,$options['regexp'])) {
+                                if ($value != '' || array_key_exists('Required', $this->_formElements[$name]['validate'])) {
+                                    if (!$this->_validate->validateRegExp($value, $options['regexp'])) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
-                                        $errors .= $this->_validate->getError()."\n";
+                                        $errors .= $this->_validate->getError() . "\n";
                                     }
                                 }
                                 break;
                             case 'FileExtension':
                                 $path = pathinfo($value['name']);
-                                if (!in_array($path['extendion'],$options)) {
+                                if (!in_array($path['extendion'], $options)) {
                                         if ($customNames) {
-                                            $errors .= 'Field '.$this->_formElements[$name]['label'].' ';
+                                            $errors .= 'Field ' . $this->_formElements[$name]['label'] . ' ';
                                         }
                                         $errors .= $this->_lang['extensionerror'] . "\n";
                                 }
@@ -816,9 +816,9 @@ abstract class Yasui_Form
         $formErrors = '';
         foreach ($elements as $element) {
             if ($formValid === true) {
-                $formValid = $this->validateField($element,$customNames);
+                $formValid = $this->validateField($element, $customNames);
             } else {
-                $this->validateField($element,$customNames);
+                $this->validateField($element, $customNames);
             }
 
             if ($this->_stopNotValid && $formValid === false) {

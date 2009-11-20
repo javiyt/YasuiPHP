@@ -6,7 +6,7 @@ final class Yasui_Request
     private $_cookie;
     private $_data;
 
-    public function __construct ()
+    public function __construct()
     {
         if (ini_get('magic_quotes_gpc')) {
             $_GET = $this->_clean($_GET);
@@ -19,12 +19,12 @@ final class Yasui_Request
         $this->_cookie = $_COOKIE;
     }
 
-    public function __set ($name,$value)
+    public function __set($name, $value)
     {
         $this->_data[$name] = $value;
     }
 
-    public function __get ($name)
+    public function __get($name)
     {
         if (isset($this->_post[$name])) {
             return $this->_post[$name];
@@ -60,7 +60,7 @@ final class Yasui_Request
         return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
     }
 
-    private function _clean ($data)
+    private function _clean($data)
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {

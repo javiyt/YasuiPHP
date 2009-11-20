@@ -5,14 +5,14 @@ class Yasui_Session
     private $_namespace;
     private $_adapter = null;
 
-    protected function __construct($namespace='',$adapter='session')
+    protected function __construct($namespace='', $adapter='session')
     {
         if ($this->_adapter == null) {
             if ($adapter == 'database') {
                 require 'Yasui/Session/Adapter/DB.php';
 
                 $this->_adapter = new Yasui_Session_Adapter_DB();
-                session_set_save_handler(array($this->_adapter,'open'),array($this->_adapter,'close'),array($this->_adapter,'read'),array($this->_adapter,'write'),array($this->_adapter,'destroy'),array($this->_adapter,'gc'));
+                session_set_save_handler(array($this->_adapter, 'open'),array($this->_adapter, 'close'),array($this->_adapter, 'read'),array($this->_adapter, 'write'),array($this->_adapter, 'destroy'),array($this->_adapter, 'gc'));
             } else {
                 $this->_adapter = $adapter;
             }
@@ -21,10 +21,10 @@ class Yasui_Session
         $this->_namespace = $namespace;
     }
 
-    public static function start($namespace='',$adapter='session')
+    public static function start($namespace='', $adapter='session')
     {
         if (self::$instance == null) {
-            self::$instance = new self($namespace,$adapter);
+            self::$instance = new self($namespace, $adapter);
         }
 
         return self::$instance;
@@ -39,7 +39,7 @@ class Yasui_Session
         return $this;
     }
 
-    public function __set($key,$value)
+    public function __set($key, $value)
     {
         $_SESSION[$this->_namespace][$key] = $value;
     }

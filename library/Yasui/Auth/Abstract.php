@@ -6,7 +6,7 @@ abstract class Yasui_Auth_Abstract
     protected $_location = null;
     private $_salt = null;
     private $_cryptMethod = null;
-    private $_cryptMethods = array('md5','sha1');
+    private $_cryptMethods = array('md5', 'sha1');
     protected $_session = null;
 
     abstract public function authenticate($identity, $credential);
@@ -33,7 +33,7 @@ abstract class Yasui_Auth_Abstract
     {
         $this->_salt = $salt;
 
-        if (in_array($method,$this->_cryptMethods)) {
+        if (in_array($method, $this->_cryptMethods)) {
             $this->_cryptMethod = $method;
         }
         return $this;

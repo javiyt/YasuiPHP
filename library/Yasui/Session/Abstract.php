@@ -8,7 +8,7 @@ abstract class Yasui_Session_Abstract
 
     abstract public function close();
     abstract public function read($session_id);
-    abstract public function write($session_id,$session_data);
+    abstract public function write($session_id, $session_data);
     abstract public function destroy($session_id);
     abstract public function gc($max_lifetime);
 }

@@ -13,7 +13,7 @@ class Yasui_Lang
     public function setLocation($location='')
     {
         if (trim($location) != '' && is_dir($location) && is_readable($location)) {
-            if (substr($location,-1) != DIRECTORY_SEPARATOR) {
+            if (substr($location, -1) != DIRECTORY_SEPARATOR) {
                 $location .= DIRECTORY_SEPARATOR;
             }
             $this->_location = $location;
@@ -43,7 +43,7 @@ class Yasui_Lang
         }
 
         foreach($this->_langs as $files) {
-            if (array_key_exists($key,$files)) {
+            if (array_key_exists($key, $files)) {
                 return $files[$key];
             }
         }

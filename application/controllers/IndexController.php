@@ -11,7 +11,7 @@ class IndexController extends Yasui_Controller {
         $authAdapter = $auth->getAdapter('DB');
         if (!$authAdapter->isAuthenticate()) {
             $request = Yasui_Registry::get('request');
-            $this->redirect($request->baseURL().'user/login');
+            $this->redirect($request->baseURL() . 'user/login');
         }
     }
 }

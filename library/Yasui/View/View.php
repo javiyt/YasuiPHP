@@ -7,7 +7,7 @@ class Yasui_View
     private $_template_path = array();
     private $_helper_path = array();
     private $_data = array();
-    private $_layout = 'indexLayout.phtml';
+    private $_layout = null;
     private $_baseURL;
     private $_pluginConf = array();
     static private $intance = null;
@@ -50,6 +50,7 @@ class Yasui_View
         $request = Yasui_Registry::get('request');
         $this->_baseURL = $request->baseURL();
         unset($request);
+        $this->_layout = 'indexLayout' . VIEWS_EXTENSION;
     }
 
     static public function getInstance()
@@ -79,7 +80,7 @@ class Yasui_View
         return $this->fetch($this->_layout);
     }
 
-    public function __call($name,$arguments)
+    public function __call($name, $arguments)
     {
         $file = $name . '.php';
         $location = $this->findFile($file, 'helper');
