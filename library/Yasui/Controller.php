@@ -94,9 +94,62 @@ abstract class Yasui_Controller
     protected function renderJSON($data)
     {
         //Avoid to render the output into html
-        $this->_renderFormat = 'json';
+        $this->renderFormat('json');
         //Set the output
         $this->_output = json_encode($data);
+    }
+
+    /**
+     * Render output in text format
+     * @param string $data
+     * @access protected
+     */
+    protected function renderText($data)
+    {
+        //Avoid to render the output into html
+        $this->renderFormat('text');
+        //Set the output
+        $this->_output = $data;
+    }
+
+    /**
+     * Render output in XML format
+     * @param string $data
+     * @access protected
+     */
+    protected function renderXML($data)
+    {
+        //Avoid to render the output into html
+        $this->renderFormat('xml');
+        //Set the output
+        $this->_output = $data;
+    }
+
+    /**
+     * Set the format to render the output
+     * @param String $format
+     */
+    protected function renderFormat($format)
+    {
+        if (in_array($format, array('html', 'json', 'text', 'xml'))) {
+            $this->_renderFormat = $format;
+        }
+    }
+
+    private function renderHeader()
+    {
+        switch($this->_renderFormat) {
+            case 'json':
+                header('Content-type: text/json');
+                break;
+            case 'text':
+                header('Content-type: text/plain');
+                break;
+            case 'xml':
+                header('Content-type: text/xml');
+                echo '<?xml version="1.0" encoding="UTF-8"?>';
+                break;
+        }
     }
 
     /**
@@ -113,6 +166,7 @@ abstract class Yasui_Controller
             //Set the content view with the actual view script
             $this->_view->content = $this->_view->fetch($this->_action . VIEWS_EXTENSION);
         } else {
+            echo $this->renderHeader();
             //If the output is another format, not HTML, returns the output
             echo $this->_output;
         }

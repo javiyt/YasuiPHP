@@ -33,6 +33,11 @@ final class Yasui_Front
      * @access private
      */
     private $_view;
+    /**
+     * It is set to true if the requested controller or action can not be found
+     * @var boolean
+     */
+    private $_notFound = false;
 
     /**
      * Constructor of the class
@@ -80,22 +85,33 @@ final class Yasui_Front
             $fileclass = APPLICATION_ROOT . CONTROLLER_ROOT . $this->_router->module . DIRECTORY_SEPARATOR . $class . '.php';
         }
 
+        ob_start();
         if (file_exists($fileclass)) {
             require $fileclass;
             $controller = new $class;
             
             foreach ($this->_preAction as $action) {
                 $this->execute($controller, $action);
+                if ($this->_notFound) {
+                    break;
+                }
             }
 
-            $action = ucfirst(strtolower($this->_router->action)) . 'Action';
-            $controller->setAction($this->_router->action);
-            $this->execute($controller, $action);
-
-            $this->addPostAction('renderLayout');
-            
-            foreach($this->_postAction as $action) {
+            if (!$this->_notFound) {
+                $action = ucfirst(strtolower($this->_router->action)) . 'Action';
+                $controller->setAction($this->_router->action);
                 $this->execute($controller, $action);
+            }
+
+            if (!$this->_notFound) {
+                $this->addPostAction('renderLayout');
+
+                foreach($this->_postAction as $action) {
+                    $this->execute($controller, $action);
+                    if ($this->_notFound) {
+                        break;
+                    }
+                }
             }
         } else {
             header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
@@ -105,6 +121,7 @@ final class Yasui_Front
                 echo 'Not Found';
             }
         }
+        ob_end_flush();
     }
 
     private function execute($controller, $action)
@@ -118,6 +135,7 @@ final class Yasui_Front
             } else {
                 echo 'Not Found';
             }
+            $this->_notFound = true;
         }
     }
 }

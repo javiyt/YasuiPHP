@@ -15,13 +15,15 @@ class Yasui_Auth_Adapter_DB extends Yasui_Auth_Abstract
         }
     }
 
-    public function authenticate($identity, $credential)
+    public function authenticate($identity, $credential, $extra = array())
     {
         if ($this->_identity == null || $this->_credential == null) {
             return false;
         }
 
-        $auth = $this->_dbAdapter->dbAdapter()->getOne($this->_location, $this->_identity, array($this->_identity => $identity, $this->_credential => $this->_getCrypCredential($credential)));
+        $get = array_merge(array($this->_identity => $identity, $this->_credential => $this->_getCrypCredential($credential)), $extra);
+
+        $auth = $this->_dbAdapter->dbAdapter()->getOne($this->_location, $this->_identity, $get);
 
         if (is_array($auth)) {
             $this->_session->identity = $auth[$this->_identity];
