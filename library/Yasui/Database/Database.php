@@ -7,7 +7,12 @@ class Yasui_Database
     {
         if ($this->_dbAdapter == null) {
             if (!Yasui_Registry::exists('databaseConnection')) {
-                require 'Yasui/Database/Driver/' . $dbAdapter . '.php';
+				$config = Yasui_Registry::get('config');
+				if (isset($config->database['driver']) && file_exists(dirname(__FILE__) . '/Driver/' . $config->database['driver'] . '.php')) {
+					$dbAdapter = $config->database['driver'];
+				}
+				
+               	require 'Yasui/Database/Driver/' . $dbAdapter . '.php';
                 
                 $adapter = 'Yasui_Database_Driver_' . $dbAdapter;
                 Yasui_Registry::set('databaseConnection', new $adapter());

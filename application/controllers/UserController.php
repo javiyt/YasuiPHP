@@ -9,7 +9,7 @@ class UserController extends Yasui_Controller
         $authAdapter = $auth->getAdapter('DB');
         
         if ($authAdapter->isAuthenticate()) {
-            $this->redirect($this->_request->baseURL());
+            $this->redirect($this->_request()->baseURL());
         }
 
         require 'application/forms/FormLogin.php';
@@ -18,7 +18,7 @@ class UserController extends Yasui_Controller
 
         if ($formLogin->formSent() && $formLogin->validateForm()) {
             if ($authAdapter->authenticate($formLogin->email, $formLogin->contrasenha)) {
-                $this->redirect($this->_request->baseURL());
+                $this->redirect($this->_request()->baseURL());
             } else {
                 $this->_view->mensaje = 'Usuario o contraseña erróneos';
                 $this->_view->loginForm = $formLogin;
@@ -34,7 +34,7 @@ class UserController extends Yasui_Controller
         $authAdapter = $auth->getAdapter('DB');
 
         if ($authAdapter->isAuthenticate()) {
-            $this->redirect($this->_request->baseURL());
+            $this->redirect($this->_request()->baseURL());
         }
 
         require 'application/forms/FormRegister.php';
@@ -63,8 +63,7 @@ class UserController extends Yasui_Controller
         $auth = Yasui_Auth::getInstance();
         $authAdapter = $auth->getAdapter('DB');
         $authAdapter->deAuthenticate();
-        $request = Yasui_Registry::get('request');
-        $this->redirect($request->baseURL());
+        $this->redirect($this->_request()->baseURL());
     }
 }
 

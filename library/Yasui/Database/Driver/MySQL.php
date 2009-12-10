@@ -94,7 +94,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
                 $noincluir = 'AND ' . $noincluir;
             }
         }
-        $rs = $this->_query("SELECT $select FROM $tabla WHERE $campos $noincluir");
+        $rs = $this->_query("SELECT $select FROM $tabla WHERE $campos $noincluir LIMIT 0,1");
         if ($rs) {
             return mysql_num_rows($rs);
         } else {
@@ -111,9 +111,10 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      */
     public function getOne($tabla='', $campos=array(), $valores=array())
     {
+		$select = '*';
         if (is_array($campos)) {
             $select = implode(',', $campos);
-        } else {
+        } else if (is_string($campos) && trim($campos) != '') {
             $select = $campos;
         }
 
@@ -136,7 +137,7 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
             }
         }
 
-        $rs = $this->_query("SELECT $select FROM $tabla $where");
+        $rs = $this->_query("SELECT $select FROM $tabla $where LIMIT 0,1");
         if ($rs) {
             return mysql_fetch_assoc($rs);
         } else {
@@ -244,16 +245,13 @@ class Yasui_Database_Driver_MySQL extends Yasui_Database_Abstract
      */
     public function update($tabla='', $where=array(), $valores=array())
     {
-        $donde = '';
-        if (!is_array($where)) {
+        if (!is_array($where) || !is_array($valores)) {
             return false;
         }
 
         $campos = '';
-        if (!is_array($valores)) {
-            return false;
-        }
-
+        $donde = '';
+        
         $where = $this->_prepare($where);
         $valores = $this->_prepare($valores);
 

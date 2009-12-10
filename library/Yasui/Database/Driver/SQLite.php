@@ -136,7 +136,7 @@ class Yasui_Database_Driver_SQLite extends Yasui_Database_Abstract
 
         $rs = $this->_query("SELECT $select FROM $tabla $where");
         if ($rs) {
-            return mysql_fetch_array($rs);
+            return sqlite_fetch_array($rs);
         } else {
             return false;
         }

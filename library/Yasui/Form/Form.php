@@ -583,7 +583,7 @@ abstract class Yasui_Form
                     $value = $_GET[$name];
                 }
 
-                if ($filtered && is_array($this->_formElements[$name]['filters'])) {
+                if ($filtered && isset($this->_formElements[$name]['filters']) && is_array($this->_formElements[$name]['filters'])) {
 
                     if ($this->_filter == null) {
                         $this->_filter = new Yasui_Filter();
@@ -646,7 +646,7 @@ abstract class Yasui_Form
             if (array_key_exists($name, $this->_formElements)) {
                 $value = $this->getValue($name);
 
-                if (is_array($this->_formElements[$name]['validate'])) {
+                if (isset($this->_formElements[$name]['validate']) && is_array($this->_formElements[$name]['validate'])) {
                     $errors = '';
 
                     if ($this->_validate == null) {
